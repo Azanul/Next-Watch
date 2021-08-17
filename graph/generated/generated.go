@@ -243,9 +243,13 @@ type Query {
 input NewMovie {
   name: String!
   poster: String!
-  actorsNames: [String!]!
-  actorsImportance: [Int!]!
+  actors: [InputAttr!]!
   watched: Boolean!
+}
+
+input InputAttr {
+  name: String!
+  importance: Int!
 }
 
 type Mutation {
@@ -1806,6 +1810,34 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputInputAttr(ctx context.Context, obj interface{}) (model.InputAttr, error) {
+	var it model.InputAttr
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "importance":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("importance"))
+			it.Importance, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewMovie(ctx context.Context, obj interface{}) (model.NewMovie, error) {
 	var it model.NewMovie
 	var asMap = obj.(map[string]interface{})
@@ -1828,19 +1860,11 @@ func (ec *executionContext) unmarshalInputNewMovie(ctx context.Context, obj inte
 			if err != nil {
 				return it, err
 			}
-		case "actorsNames":
+		case "actors":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actorsNames"))
-			it.ActorsNames, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "actorsImportance":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actorsImportance"))
-			it.ActorsImportance, err = ec.unmarshalNInt2ᚕintᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("actors"))
+			it.Actors, err = ec.unmarshalNInputAttr2ᚕᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐInputAttrᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2342,6 +2366,32 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInputAttr2ᚕᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐInputAttrᚄ(ctx context.Context, v interface{}) ([]*model.InputAttr, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.InputAttr, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInputAttr2ᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐInputAttr(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNInputAttr2ᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐInputAttr(ctx context.Context, v interface{}) (*model.InputAttr, error) {
+	res, err := ec.unmarshalInputInputAttr(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2355,36 +2405,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNInt2ᚕintᚄ(ctx context.Context, v interface{}) ([]int, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]int, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNMovie2githubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐMovie(ctx context.Context, sel ast.SelectionSet, v model.Movie) graphql.Marshaler {
@@ -2456,36 +2476,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

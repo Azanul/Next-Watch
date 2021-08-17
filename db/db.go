@@ -2,51 +2,52 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"github.com/Azanul/Next-Watch/graph/model"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"time"
 )
 
-type DB interface {
-	GetMovies(attr string) ([]*model.Movie, error)
+var mongoHost = "Azan:<password>@moviecluster.t9pn0.mongodb.net/movieDB"
+
+type DB struct {
+	client *mongo.Client
 }
 
-type MongoDB struct {
-	collection *mongo.Collection
-}
-
-func New(client *mongo.Client) *MongoDB {
-	movies := client.Database("movieDB").Collection("movies")
-	return &MongoDB{
-		collection: movies,
-	}
-}
-
-func (db MongoDB) GetMovies(attr string) ([]*model.Movie, error) {
-	res, err := db.collection.Find(context.TODO(), db.filter(attr))
+func Connect() *DB {
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://" + mongoHost + "?retryWrites=true&w=majority"))
 	if err != nil {
-		log.Printf("Error while fetching movies: %s", err.Error())
-		return nil, err
+		fmt.Println("Error getting client: " + err.Error())
 	}
-	var p []*model.Movie
-	err = res.All(context.TODO(), &p)
-	if err != nil {
-		log.Printf("Error while decoding movies: %s", err.Error())
-		return nil, err
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = client.Connect(ctx)
+	return &DB{
+		client: client,
 	}
-	return p, nil
 }
 
-func (db MongoDB) filter(attr string) bson.D {
-	return bson.D{{
-		"attribute.name",
-		bson.D{{
-			"$regex",
-			"^" + attr + ".*$",
-		}, {
-			"$options",
-			"i",
-		}},
-	}}
+func (*DB) Save(movie *model.NewMovie) *model.Movie {
+	collection := Connect().client.Database("movieDB").Collection("movies")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res, err := collection.InsertOne(ctx, movie)
+	if err != nil {
+		fmt.Println("Error inserting movie: " + err.Error())
+	}
+
+	inputActors := make([]*model.Attr, len(movie.Actors))
+	for i, ele := range movie.Actors {
+		inputActors[i] = (*model.Attr)(ele)
+	}
+
+	return &model.Movie{
+		ID:      res.InsertedID.(primitive.ObjectID).Hex(),
+		Name:    movie.Name,
+		Poster:  movie.Poster,
+		Actors:  inputActors,
+		Watched: movie.Watched,
+	}
 }

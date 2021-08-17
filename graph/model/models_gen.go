@@ -7,6 +7,11 @@ type Attr struct {
 	Importance int    `json:"importance"`
 }
 
+type InputAttr struct {
+	Name       string `json:"name"`
+	Importance int    `json:"importance"`
+}
+
 type Movie struct {
 	ID      string  `json:"_id"`
 	Name    string  `json:"name"`
@@ -16,9 +21,8 @@ type Movie struct {
 }
 
 type NewMovie struct {
-	Name             string   `json:"name"`
-	Poster           string   `json:"poster"`
-	ActorsNames      []string `json:"actorsNames"`
-	ActorsImportance []int    `json:"actorsImportance"`
-	Watched          bool     `json:"watched"`
+	Name    string       `json:"name"`
+	Poster  string       `json:"poster"`
+	Actors  []*InputAttr `json:"actors"`
+	Watched bool         `json:"watched"`
 }

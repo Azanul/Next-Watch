@@ -22,9 +22,13 @@ type Query {
 input NewMovie {
   name: String!
   poster: String!
-  actorsNames: [String!]!
-  actorsImportance: [Int!]!
+  actors: [InputAttr!]!
   watched: Boolean!
+}
+
+input InputAttr {
+  name: String!
+  importance: Int!
 }
 
 type Mutation {
