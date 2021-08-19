@@ -15,8 +15,8 @@ func (r *mutationResolver) InsertMovie(ctx context.Context, input model.NewMovie
 	return dB.Save(&input), nil
 }
 
-func (r *queryResolver) Movies(ctx context.Context, attr string) ([]*model.Movie, error) {
-	return dB.GetMovies(attr)
+func (r *queryResolver) Movies(ctx context.Context, val string) ([]*model.Movie, error) {
+	return dB.GetMovies(val)
 }
 
 // Mutation returns generated.MutationResolver implementation.

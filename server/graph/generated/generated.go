@@ -61,7 +61,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Movies func(childComplexity int, attr string) int
+		Movies func(childComplexity int, val string) int
 	}
 }
 
@@ -69,7 +69,7 @@ type MutationResolver interface {
 	InsertMovie(ctx context.Context, input model.NewMovie) (*model.Movie, error)
 }
 type QueryResolver interface {
-	Movies(ctx context.Context, attr string) ([]*model.Movie, error)
+	Movies(ctx context.Context, val string) ([]*model.Movie, error)
 }
 
 type executableSchema struct {
@@ -158,7 +158,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Movies(childComplexity, args["attr"].(string)), true
+		return e.complexity.Query.Movies(childComplexity, args["val"].(string)), true
 
 	}
 	return 0, false
@@ -242,7 +242,7 @@ type Attr {
 }
 
 type Query {
-  movies(attr: String!): [Movie!]!
+  movies(val: String!): [Movie!]!
 }
 
 input NewMovie {
@@ -301,14 +301,14 @@ func (ec *executionContext) field_Query_movies_args(ctx context.Context, rawArgs
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["attr"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("attr"))
+	if tmp, ok := rawArgs["val"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("val"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["attr"] = arg0
+	args["val"] = arg0
 	return args, nil
 }
 
@@ -662,7 +662,7 @@ func (ec *executionContext) _Query_movies(ctx context.Context, field graphql.Col
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Movies(rctx, args["attr"].(string))
+		return ec.resolvers.Query().Movies(rctx, args["val"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

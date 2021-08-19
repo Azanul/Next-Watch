@@ -16,7 +16,7 @@ type Attr {
 }
 
 type Query {
-  movies(attr: String!): [Movie!]!
+  movies(val: String!): [Movie!]!
 }
 
 input NewMovie {

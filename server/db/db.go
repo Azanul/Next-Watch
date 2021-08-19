@@ -12,14 +12,14 @@ import (
 	"time"
 )
 
-var mongoHost = "Azan:<password>@moviecluster.t9pn0.mongodb.net/movieDB"
+var mongoHost = "Azan:<password>@moviecluster.t9pn0.mongodb.net/test"
 
 type DB struct {
 	client *mongo.Collection
 }
 
 func Connect() *DB {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://" + mongoHost + "?retryWrites=true&w=majority"))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://" + mongoHost + "?authSource=admin"))
 	if err != nil {
 		fmt.Println("Error getting client: " + err.Error())
 	}
@@ -57,30 +57,37 @@ func (*DB) Save(movie *model.NewMovie) *model.Movie {
 	}
 }
 
-func (db DB) GetMovies(skill string) ([]*model.Movie, error) {
-	res, err := db.client.Find(context.TODO(), db.filter(skill))
+func (db DB) GetMovies(val string) ([]*model.Movie, error) {
+	res, err := db.client.Find(context.TODO(), db.filter(val))
 	if err != nil {
-		log.Printf("Error while fetching programmers: %s", err.Error())
+		log.Println("Error while fetching movies: " + err.Error())
 		return nil, err
 	}
 	var p []*model.Movie
-	err = res.All(context.TODO(), &p)
-	if err != nil {
-		log.Printf("Error while decoding programmers: %s", err.Error())
+	if err = res.All(context.TODO(), &p); err != nil {
+		log.Println("Error while decoding movies: " + err.Error())
 		return nil, err
 	}
 	return p, nil
 }
 
-func (db DB) filter(attr string) bson.D {
-	return bson.D{{
-		"attr.name",
-		bson.D{{
-			"$regex",
-			"^" + attr + ".*$",
-		}, {
-			"$options",
-			"i",
-		}},
+func (db DB) filter(val string) bson.M {
+	attrs := []string{"name", "director.name", "actors.name"}
+	return bson.M{"$or": []bson.M{
+		{attrs[0]: primitive.Regex{
+			Pattern: "^" + val + ".*$",
+			Options: "i",
+		},
+		},
+		{attrs[1]: primitive.Regex{
+			Pattern: "^" + val + ".*$",
+			Options: "i",
+		},
+		},
+		{attrs[2]: primitive.Regex{
+			Pattern: "^" + val + ".*$",
+			Options: "i",
+		},
+		},
 	}}
 }
