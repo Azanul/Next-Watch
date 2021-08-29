@@ -9,16 +9,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
 	"time"
 )
 
-var mongoHost = "Azan:<password>@moviecluster.t9pn0.mongodb.net/test"
-
 type DB struct {
+	//The DB collection with the required data
 	client *mongo.Collection
 }
 
 func Connect() *DB {
+	//Connecting to the MongoDB server using URI
+	var mongoHost = os.Getenv("MONGO_URI")
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://" + mongoHost + "?authSource=admin"))
 	if err != nil {
 		fmt.Println("Error getting client: " + err.Error())
@@ -35,6 +37,7 @@ func Connect() *DB {
 }
 
 func (*DB) Save(movie *model.NewMovie) *model.Movie {
+	// A method for saving input movie in the connected DB collection
 	collection := Connect().client
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -58,6 +61,7 @@ func (*DB) Save(movie *model.NewMovie) *model.Movie {
 }
 
 func (db DB) GetMovies(val string) ([]*model.Movie, error) {
+	// Returns all the movies with actors, director or name starting with given string (val)
 	res, err := db.client.Find(context.TODO(), db.filter(val))
 	if err != nil {
 		log.Println("Error while fetching movies: " + err.Error())
