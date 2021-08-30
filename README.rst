@@ -1,18 +1,31 @@
 |Next Watch|
 
 .. |Next Watch| image:: https://capsule-render.vercel.app/api?type=rect&color=gradient&height=200&section=footer&text=Next%20Watch&fontSize=60&fontAlignY=50
-
       
 |SS|
 
 .. |SS| image:: https://github.com/Azanul/Next-Watch/blob/master/ScreenShots/WebSS.png
 
+
+|____________________| |Maintenance yes| |____________________| |GitHub contributors| |____________________| |BSD 3-Clause License| |____________________|
+
+
+|_________________________| |ForTheBadge uses-js| |_________________________| |ForTheBadge built-with-love| |_________________________|
+
+.. |ForTheBadge built-with-love| image:: http://ForTheBadge.com/images/badges/built-with-love.svg
+   :target: #
+.. |ForTheBadge uses-js| image:: http://ForTheBadge.com/images/badges/uses-js.svg
+   :target: #
+.. |BSD 3-Clause License| image:: https://img.shields.io/badge/License-GPLv3-blue.svg
+   :target: https://github.com/Azanul/Next-Watch/blob/master/LICENSE
+.. |Maintenance yes| image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
+   :target: https://github.com/Azanul/Next-Watch/graphs/commit-activity
+.. |GitHub contributors| image:: https://img.shields.io/github/contributors/Taiyogakure/chunin-exams.svg
+   :target: https://github.com/Azanul/Next-Watch/graphs/contributors
  
 
 
 | |___________| |JavaScript| |___________| |React-js| |___________| |Graph-QL|  |___________| |Go| |___________| 
-|
-|____________________| |HTML5| |____________________| |CSS| |____________________| |Sass| |____________________|
 
 
 .. |JavaScript| image:: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
@@ -26,6 +39,12 @@
    
 .. |Go| image:: https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white
    :target: https://golang.org/
+
+
+|____________________| |HTML5| |____________________| |CSS| |____________________| |Sass| |____________________|
+
+
+
    
 .. |HTML5| image:: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
    :target: https://html.com/
