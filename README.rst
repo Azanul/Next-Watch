@@ -10,13 +10,9 @@
  
 
 
-|JavaScript| 
-|React-js| 
-|Graph-QL| 
-|Go| 
-|HTML5| 
-|CSS| 
-|Sass| 
+| |___________| |JavaScript| |___________| |React-js| |___________| |Graph-QL|  |___________| |Go| |___________| 
+|
+|____________________| |HTML5| |____________________| |CSS| |____________________| |Sass| |____________________|
 
 
 .. |JavaScript| image:: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
