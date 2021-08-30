@@ -1,56 +1,23 @@
-*************
-Next Watch
-*************
+|Next Watch|
 
-|Maintenance yes| |GitHub contributors|
+.. |Next Watch| image:: https://capsule-render.vercel.app/api?type=rect&color=gradient&height=200&section=footer&text=Next%20Watch&fontSize=60&fontAlignY=50
 
-|ForTheBadge uses-js| |__| |ForTheBadge built-with-love| 
+      
+|SS|
 
-.. |ForTheBadge built-with-love| image:: http://ForTheBadge.com/images/badges/built-with-love.svg
-   :target: #
-.. |ForTheBadge uses-js| image:: http://ForTheBadge.com/images/badges/uses-js.svg
-   :target: #
-.. |Maintenance yes| image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
-   :target: https://github.com/Azanul/Next-Watch/graphs/commit-activity
-.. |GitHub contributors| image:: https://img.shields.io/github/contributors/Azanul/Next-Watch.svg
-   :target: https://github.com/Azanul/Next-Watch/graphs/contributors
+.. |SS| image:: https://github.com/Azanul/Next-Watch/blob/master/ScreenShots/WebSS.png
+
  
-.. contents::
 
-Introduction
-============
 
-This web app made with Go, and database handled with GraphQL lets user decide what to watch next!  Users can wishlist or mark a movie watched to manage their movie watchlist.
+|JavaScript| 
+|React-js| 
+|Graph-QL| 
+|Go| 
+|HTML5| 
+|CSS| 
+|Sass| 
 
-Prerequisites
-=============
-
-•	Should have prior knowledge of JavaScript basics, React.js, Go and GraphQL. 
-•	Prior installation of React.js and IDE.
-
-Tech Stack
-==========
-
-•	|JavaScript| 
-It is high-level, often just-in-time compiled, and multi-paradigm. It has curly-bracket syntax, dynamic typing, prototype-based object-orientation, and first-class functions.
-
-•	|React-js| 
-It is an open-source, front end, JavaScript library for building user interfaces or UI components. 
-
-•	|Graph-QL| 
-ItL is an open-source data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data.
-
-•	|Go| 
-It is an open source programming language that makes it easy to build simple, reliable, and efficient software.
-
-•	|HTML5| 
-It is the standard markup language for documents designed to be displayed in a web browser.
-
-•	|CSS| 
-It is a style sheet language used for describing the presentation of a document written in a markup language such as HTML. CSS is a cornerstone technology of the World Wide Web, alongside HTML and JavaScript.
-
-•	|Sass| 
-It is a preprocessor scripting language that is interpreted or compiled into Cascading Style Sheets. SassScript is the scripting language itself.
 
 .. |JavaScript| image:: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
    :target: https://www.javascript.com/
@@ -73,7 +40,17 @@ It is a preprocessor scripting language that is interpreted or compiled into Cas
 .. |Sass| image:: https://img.shields.io/badge/sass-%2300ADD8.svg?style=for-the-badge&logo=sass&logoColor=white
    :target: https://sass-lang.com/
    
-   
+
+Introduction
+============
+
+This web app made with Go, and database handled with GraphQL lets me decide what to watch next!  I can wishlist or mark a movie watched to manage my movie watchlist. Users worldwide can suggest me anything to watch and add it to my watchlist.
+
+Guide
+============
+Next-watch website - `Next watch`_
+
+..  _Next watch: https://next-watch-87.herokuapp.com/
 
 Contributors
 ============
@@ -81,3 +58,10 @@ Contributors
 .. _Azanul Haque: https://github.com/Azanul
 - `Ambareen Azam`_
 .. _Ambareen Azam: https://github.com/Ambareen09
+
+License
+============
+
+Next-watch is licensed under - `BSD 3-Clause License`_
+
+.. _BSD 3-Clause License: https://github.com/Azanul/Next-Watch/blob/master/LICENSE
