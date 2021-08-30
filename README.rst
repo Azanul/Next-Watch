@@ -1,3 +1,7 @@
+Next-watch website - `Next watch`_ 
+====================================
+..  _Next watch: https://next-watch-87.herokuapp.com/
+
 |Next Watch|
 
 .. |Next Watch| image:: https://capsule-render.vercel.app/api?type=rect&color=gradient&height=200&section=footer&text=Next%20Watch&fontSize=60&fontAlignY=50
@@ -7,25 +11,25 @@
 .. |SS| image:: https://github.com/Azanul/Next-Watch/blob/master/ScreenShots/WebSS.png
 
 
-|_________________| |Maintenance yes| |_________________| |GitHub contributors| |_________________| |BSD 3-Clause License| |_________________|
+| |Maintenance yes|  |GitHub contributors|  |BSD 3-Clause License| 
 
 
-|__________________________| |ForTheBadge uses-js| |__________________________| |ForTheBadge built-with-love| |_________________________|
+| |ForTheBadge uses-js|  |ForTheBadge built-with-love| 
 
 .. |ForTheBadge built-with-love| image:: http://ForTheBadge.com/images/badges/built-with-love.svg
    :target: #
 .. |ForTheBadge uses-js| image:: http://ForTheBadge.com/images/badges/uses-js.svg
    :target: #
-.. |BSD 3-Clause License| image:: https://img.shields.io/badge/BSD 3-Clause License-blue.svg
+.. |BSD 3-Clause License| image:: https://img.shields.io/github/license/Azanul/Next-Watch?style=for-the-badge
    :target: https://github.com/Azanul/Next-Watch/blob/master/LICENSE
-.. |Maintenance yes| image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
+.. |Maintenance yes| image:: https://img.shields.io/maintenance/yes/2021?style=for-the-badge
    :target: https://github.com/Azanul/Next-Watch/graphs/commit-activity
-.. |GitHub contributors| image:: https://img.shields.io/github/contributors/Azanul/Next-Watch.svg
+.. |GitHub contributors| image:: https://img.shields.io/github/contributors/Azanul/Next-Watch?style=for-the-badge
    :target: https://github.com/Azanul/Next-Watch/graphs/contributors
  
 
 
-| |___________| |JavaScript| |___________| |React-js| |___________| |Graph-QL|  |___________| |Go| |___________| 
+|  |JavaScript| |React-js| |Graph-QL|   |Go|  |HTML5|  |CSS|  |Sass|
 
 
 .. |JavaScript| image:: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
@@ -40,12 +44,6 @@
 .. |Go| image:: https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white
    :target: https://golang.org/
 
-
-|____________________| |HTML5| |____________________| |CSS| |____________________| |Sass| |____________________|
-
-
-
-   
 .. |HTML5| image:: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
    :target: https://html.com/
    
@@ -63,9 +61,7 @@ This web app made with Go, and database handled with GraphQL lets me decide what
 
 Guide
 ============
-Next-watch website - `Next watch`_
-
-..  _Next watch: https://next-watch-87.herokuapp.com/
+*404*
 
 Contributors
 ============
