@@ -16,11 +16,11 @@
    :target: #
 .. |ForTheBadge uses-js| image:: http://ForTheBadge.com/images/badges/uses-js.svg
    :target: #
-.. |BSD 3-Clause License| image:: https://img.shields.io/badge/License-GPLv3-blue.svg
+.. |BSD 3-Clause License| image:: https://img.shields.io/badge/BSD 3-Clause License-blue.svg
    :target: https://github.com/Azanul/Next-Watch/blob/master/LICENSE
 .. |Maintenance yes| image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
    :target: https://github.com/Azanul/Next-Watch/graphs/commit-activity
-.. |GitHub contributors| image:: https://img.shields.io/github/contributors/Taiyogakure/chunin-exams.svg
+.. |GitHub contributors| image:: https://img.shields.io/github/contributors/Azanul/Next-Watch.svg
    :target: https://github.com/Azanul/Next-Watch/graphs/contributors
  
 
