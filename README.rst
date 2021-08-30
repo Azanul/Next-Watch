@@ -7,10 +7,10 @@
 .. |SS| image:: https://github.com/Azanul/Next-Watch/blob/master/ScreenShots/WebSS.png
 
 
-|____________________| |Maintenance yes| |____________________| |GitHub contributors| |____________________| |BSD 3-Clause License| |____________________|
+|_________________| |Maintenance yes| |_________________| |GitHub contributors| |_________________| |BSD 3-Clause License| |_________________|
 
 
-|_________________________| |ForTheBadge uses-js| |_________________________| |ForTheBadge built-with-love| |_________________________|
+|__________________________| |ForTheBadge uses-js| |__________________________| |ForTheBadge built-with-love| |_________________________|
 
 .. |ForTheBadge built-with-love| image:: http://ForTheBadge.com/images/badges/built-with-love.svg
    :target: #
