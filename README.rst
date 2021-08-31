@@ -13,13 +13,6 @@ Next-watch website - `Next watch`_
 
 | |Maintenance yes|  |GitHub contributors|  |BSD 3-Clause License| 
 
-
-| |ForTheBadge uses-js|  |ForTheBadge built-with-love| 
-
-.. |ForTheBadge built-with-love| image:: http://ForTheBadge.com/images/badges/built-with-love.svg
-   :target: #
-.. |ForTheBadge uses-js| image:: http://ForTheBadge.com/images/badges/uses-js.svg
-   :target: #
 .. |BSD 3-Clause License| image:: https://img.shields.io/github/license/Azanul/Next-Watch?style=for-the-badge
    :target: https://github.com/Azanul/Next-Watch/blob/master/LICENSE
 .. |Maintenance yes| image:: https://img.shields.io/maintenance/yes/2021?style=for-the-badge
