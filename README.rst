@@ -22,7 +22,7 @@ Next-watch website - `Next watch`_
  
 
 
-|  |JavaScript| |React-js| |Graph-QL|   |Go|  |HTML5|  |CSS|  |Sass|
+|  |JavaScript| |React-js| |Graph-QL|   |Go|  |HTML5|  |CSS|  |Sass|  |Apollo-GraphQL|
 
 
 .. |JavaScript| image:: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
@@ -45,6 +45,9 @@ Next-watch website - `Next watch`_
  
 .. |Sass| image:: https://img.shields.io/badge/sass-%2300ADD8.svg?style=for-the-badge&logo=sass&logoColor=white
    :target: https://sass-lang.com/
+   
+.. |Apollo-GraphQL| image:: https://img.shields.io/badge/-ApolloGraphQL-311C87?style=for-the-badge&logo=apollo-graphql
+   :target: https://www.apollographql.com/
    
 
 Introduction
