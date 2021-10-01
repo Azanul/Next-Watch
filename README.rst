@@ -59,6 +59,11 @@ Guide
 ============
 *404*
 
+Maintainers
+============
+- `Azanul Haque`_ 
+.. _Azanul Haque: https://github.com/Azanul
+
 Contributors
 ============
 - `Azanul Haque`_ 
