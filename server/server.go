@@ -7,7 +7,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Azanul/Next-Watch/graph"
-	"github.com/Azanul/Next-Watch/graph/generated"
 )
 
 const defaultPort = "8080"
@@ -18,7 +17,7 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/", http.FileServer(http.Dir("./build")))
 	http.Handle("/query", srv)
