@@ -10,7 +10,7 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Azanul/Next-Watch/graph"
-	"github.com/Azanul/Next-Watch/graph/model"
+	"github.com/Azanul/Next-Watch/internal/auth"
 )
 
 const defaultPort = "8080"
@@ -38,7 +38,10 @@ func main() {
 }
 
 func hasRoleDirective(ctx context.Context, obj interface{}, next graphql.Resolver, role string) (interface{}, error) {
-	user := getUserFromContext(ctx)
+	user, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// Check if the user has the required role
 	if user.Role != role {
@@ -47,10 +50,6 @@ func hasRoleDirective(ctx context.Context, obj interface{}, next graphql.Resolve
 
 	// If the user has the role, continue to the next resolver
 	return next(ctx)
-}
-
-func getUserFromContext(ctx context.Context) model.User {
-	return ctx.Value("user").(model.User)
 }
 
 //func cors(h http.HandlerFunc) http.HandlerFunc {

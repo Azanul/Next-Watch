@@ -6,24 +6,80 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/Azanul/Next-Watch/graph/model"
+	"github.com/Azanul/Next-Watch/internal/auth"
+	"github.com/google/uuid"
 )
 
 // RateMovie is the resolver for the rateMovie field.
-func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, rating int) (*model.Rating, error) {
-	panic(fmt.Errorf("not implemented: RateMovie - rateMovie"))
-}
+func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score int) (*model.Rating, error) {
+	currentUser, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-// UpdateRating is the resolver for the updateRating field.
-func (r *mutationResolver) UpdateRating(ctx context.Context, id string, score int) (*model.Rating, error) {
-	panic(fmt.Errorf("not implemented: UpdateRating - updateRating"))
+	// Validate inputs
+	var currentUserUUID, movieUUID uuid.UUID
+	if currentUserUUID, err = uuid.Parse(currentUser.ID); err != nil {
+		return nil, errors.New("Invalid user id")
+	}
+	if movieUUID, err = uuid.Parse(movieID); err != nil {
+		return nil, errors.New("Invalid movie id")
+	}
+	if score < 1 || score > 5 {
+		return nil, errors.New("rating score must be between 1 and 5")
+	}
+
+	// Call service to rate movie
+	rating, err := r.RatingService.RateMovie(ctx, currentUserUUID, movieUUID, score)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert internal model to GraphQL model
+	return &model.Rating{
+		ID:    rating.ID.String(),
+		User:  &model.User{ID: rating.UserID.String()},
+		Movie: &model.Movie{ID: rating.MovieID.String()},
+		Score: rating.Score,
+	}, nil
 }
 
 // DeleteRating is the resolver for the deleteRating field.
 func (r *mutationResolver) DeleteRating(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteRating - deleteRating"))
+	// Get current user from context
+	currentUser, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	ratingID, err := uuid.Parse(id)
+	if err != nil {
+		return false, errors.New("invalid rating ID")
+	}
+
+	// Fetch the rating
+	rating, err := r.RatingService.GetRatingByID(ctx, ratingID)
+	if err != nil {
+		return false, err
+	}
+	if rating == nil {
+		return false, errors.New("rating not found")
+	}
+
+	// Check if the user is authorized to delete this rating
+	isAdmin := currentUser.Role == "ADMIN"
+	isOwner := rating.UserID.String() == currentUser.ID
+
+	if !isAdmin && !isOwner {
+		return false, errors.New("not authorized to delete this rating")
+	}
+
+	// Delete the rating
+	return r.RatingService.DeleteRating(ctx, ratingID)
 }
 
 // CreateMovie is the resolver for the createMovie field.
