@@ -18,6 +18,24 @@ func NewMovieRepository(db *sql.DB) *MovieRepository {
 	return &MovieRepository{db: db}
 }
 
+func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Movie, error) {
+	query := `SELECT id, title, genre, year, wiki, plot, cast 
+              FROM movies 
+              WHERE id = $1`
+
+	var movie models.Movie
+	err := r.db.QueryRowContext(ctx, query, id).Scan(
+		id.String(), &movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &movie, nil
+}
+
 func (r *MovieRepository) GetByTitle(ctx context.Context, title string) (*models.Movie, error) {
 	query := `SELECT id, genre, year, wiki, plot, cast 
               FROM movies 
