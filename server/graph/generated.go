@@ -64,9 +64,8 @@ type ComplexityRoot struct {
 		DeleteMovie  func(childComplexity int, id string) int
 		DeleteRating func(childComplexity int, id string) int
 		DeleteUser   func(childComplexity int, id string) int
-		RateMovie    func(childComplexity int, movieID string, rating int) int
+		RateMovie    func(childComplexity int, movieID string, score int) int
 		UpdateMovie  func(childComplexity int, id string, input model.MovieInput) int
-		UpdateRating func(childComplexity int, id string, score int) int
 		UpdateUser   func(childComplexity int, id string, username *string, email *string) int
 	}
 
@@ -81,10 +80,10 @@ type ComplexityRoot struct {
 	}
 
 	Rating struct {
-		ID      func(childComplexity int) int
-		MovieID func(childComplexity int) int
-		Score   func(childComplexity int) int
-		UserID  func(childComplexity int) int
+		ID    func(childComplexity int) int
+		Movie func(childComplexity int) int
+		Score func(childComplexity int) int
+		User  func(childComplexity int) int
 	}
 
 	User struct {
@@ -96,8 +95,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	RateMovie(ctx context.Context, movieID string, rating int) (*model.Rating, error)
-	UpdateRating(ctx context.Context, id string, score int) (*model.Rating, error)
+	RateMovie(ctx context.Context, movieID string, score int) (*model.Rating, error)
 	DeleteRating(ctx context.Context, id string) (bool, error)
 	CreateMovie(ctx context.Context, input model.MovieInput) (*model.Movie, error)
 	UpdateMovie(ctx context.Context, id string, input model.MovieInput) (*model.Movie, error)
@@ -254,7 +252,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RateMovie(childComplexity, args["movieId"].(string), args["rating"].(int)), true
+		return e.complexity.Mutation.RateMovie(childComplexity, args["movieId"].(string), args["score"].(int)), true
 
 	case "Mutation.updateMovie":
 		if e.complexity.Mutation.UpdateMovie == nil {
@@ -267,18 +265,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateMovie(childComplexity, args["id"].(string), args["input"].(model.MovieInput)), true
-
-	case "Mutation.updateRating":
-		if e.complexity.Mutation.UpdateRating == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateRating_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateRating(childComplexity, args["id"].(string), args["score"].(int)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -368,12 +354,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Rating.ID(childComplexity), true
 
-	case "Rating.movieId":
-		if e.complexity.Rating.MovieID == nil {
+	case "Rating.movie":
+		if e.complexity.Rating.Movie == nil {
 			break
 		}
 
-		return e.complexity.Rating.MovieID(childComplexity), true
+		return e.complexity.Rating.Movie(childComplexity), true
 
 	case "Rating.score":
 		if e.complexity.Rating.Score == nil {
@@ -382,12 +368,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Rating.Score(childComplexity), true
 
-	case "Rating.userId":
-		if e.complexity.Rating.UserID == nil {
+	case "Rating.user":
+		if e.complexity.Rating.User == nil {
 			break
 		}
 
-		return e.complexity.Rating.UserID(childComplexity), true
+		return e.complexity.Rating.User(childComplexity), true
 
 	case "User.email":
 		if e.complexity.User.Email == nil {
@@ -796,11 +782,11 @@ func (ec *executionContext) field_Mutation_rateMovie_args(ctx context.Context, r
 		return nil, err
 	}
 	args["movieId"] = arg0
-	arg1, err := ec.field_Mutation_rateMovie_argsRating(ctx, rawArgs)
+	arg1, err := ec.field_Mutation_rateMovie_argsScore(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["rating"] = arg1
+	args["score"] = arg1
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_rateMovie_argsMovieID(
@@ -825,21 +811,21 @@ func (ec *executionContext) field_Mutation_rateMovie_argsMovieID(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_rateMovie_argsRating(
+func (ec *executionContext) field_Mutation_rateMovie_argsScore(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (int, error) {
 	// We won't call the directive if the argument is null.
 	// Set call_argument_directives_with_null to true to call directives
 	// even if the argument is null.
-	_, ok := rawArgs["rating"]
+	_, ok := rawArgs["score"]
 	if !ok {
 		var zeroVal int
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("rating"))
-	if tmp, ok := rawArgs["rating"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("score"))
+	if tmp, ok := rawArgs["score"]; ok {
 		return ec.unmarshalNInt2int(ctx, tmp)
 	}
 
@@ -903,65 +889,6 @@ func (ec *executionContext) field_Mutation_updateMovie_argsInput(
 	}
 
 	var zeroVal model.MovieInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateRating_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_updateRating_argsID(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["id"] = arg0
-	arg1, err := ec.field_Mutation_updateRating_argsScore(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["score"] = arg1
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_updateRating_argsID(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["id"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateRating_argsScore(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (int, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["score"]
-	if !ok {
-		var zeroVal int
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("score"))
-	if tmp, ok := rawArgs["score"]; ok {
-		return ec.unmarshalNInt2int(ctx, tmp)
-	}
-
-	var zeroVal int
 	return zeroVal, nil
 }
 
@@ -1605,7 +1532,7 @@ func (ec *executionContext) _Mutation_rateMovie(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RateMovie(rctx, fc.Args["movieId"].(string), fc.Args["rating"].(int))
+		return ec.resolvers.Mutation().RateMovie(rctx, fc.Args["movieId"].(string), fc.Args["score"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1632,10 +1559,10 @@ func (ec *executionContext) fieldContext_Mutation_rateMovie(ctx context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Rating_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Rating_userId(ctx, field)
-			case "movieId":
-				return ec.fieldContext_Rating_movieId(ctx, field)
+			case "user":
+				return ec.fieldContext_Rating_user(ctx, field)
+			case "movie":
+				return ec.fieldContext_Rating_movie(ctx, field)
 			case "score":
 				return ec.fieldContext_Rating_score(ctx, field)
 			}
@@ -1650,71 +1577,6 @@ func (ec *executionContext) fieldContext_Mutation_rateMovie(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_rateMovie_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateRating(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateRating(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateRating(rctx, fc.Args["id"].(string), fc.Args["score"].(int))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Rating)
-	fc.Result = res
-	return ec.marshalNRating2ᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐRating(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateRating(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Rating_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Rating_userId(ctx, field)
-			case "movieId":
-				return ec.fieldContext_Rating_movieId(ctx, field)
-			case "score":
-				return ec.fieldContext_Rating_score(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Rating", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateRating_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2560,10 +2422,10 @@ func (ec *executionContext) fieldContext_Query_ratings(ctx context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Rating_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Rating_userId(ctx, field)
-			case "movieId":
-				return ec.fieldContext_Rating_movieId(ctx, field)
+			case "user":
+				return ec.fieldContext_Rating_user(ctx, field)
+			case "movie":
+				return ec.fieldContext_Rating_movie(ctx, field)
 			case "score":
 				return ec.fieldContext_Rating_score(ctx, field)
 			}
@@ -2733,10 +2595,10 @@ func (ec *executionContext) fieldContext_Query_allRatings(_ context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Rating_id(ctx, field)
-			case "userId":
-				return ec.fieldContext_Rating_userId(ctx, field)
-			case "movieId":
-				return ec.fieldContext_Rating_movieId(ctx, field)
+			case "user":
+				return ec.fieldContext_Rating_user(ctx, field)
+			case "movie":
+				return ec.fieldContext_Rating_movie(ctx, field)
 			case "score":
 				return ec.fieldContext_Rating_score(ctx, field)
 			}
@@ -3008,8 +2870,8 @@ func (ec *executionContext) fieldContext_Rating_id(_ context.Context, field grap
 	return fc, nil
 }
 
-func (ec *executionContext) _Rating_userId(ctx context.Context, field graphql.CollectedField, obj *model.Rating) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Rating_userId(ctx, field)
+func (ec *executionContext) _Rating_user(ctx context.Context, field graphql.CollectedField, obj *model.Rating) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Rating_user(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3022,7 +2884,7 @@ func (ec *executionContext) _Rating_userId(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
+		return obj.User, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3034,26 +2896,36 @@ func (ec *executionContext) _Rating_userId(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Rating_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Rating_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Rating",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "passwordHash":
+				return ec.fieldContext_User_passwordHash(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Rating_movieId(ctx context.Context, field graphql.CollectedField, obj *model.Rating) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Rating_movieId(ctx, field)
+func (ec *executionContext) _Rating_movie(ctx context.Context, field graphql.CollectedField, obj *model.Rating) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Rating_movie(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3066,7 +2938,7 @@ func (ec *executionContext) _Rating_movieId(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MovieID, nil
+		return obj.Movie, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3078,19 +2950,35 @@ func (ec *executionContext) _Rating_movieId(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*model.Movie)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNMovie2ᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐMovie(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Rating_movieId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Rating_movie(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Rating",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Movie_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Movie_title(ctx, field)
+			case "genre":
+				return ec.fieldContext_Movie_genre(ctx, field)
+			case "year":
+				return ec.fieldContext_Movie_year(ctx, field)
+			case "wiki":
+				return ec.fieldContext_Movie_wiki(ctx, field)
+			case "plot":
+				return ec.fieldContext_Movie_plot(ctx, field)
+			case "cast":
+				return ec.fieldContext_Movie_cast(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Movie", field.Name)
 		},
 	}
 	return fc, nil
@@ -5254,13 +5142,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updateRating":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateRating(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "deleteRating":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteRating(ctx, field)
@@ -5547,13 +5428,13 @@ func (ec *executionContext) _Rating(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "userId":
-			out.Values[i] = ec._Rating_userId(ctx, field, obj)
+		case "user":
+			out.Values[i] = ec._Rating_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "movieId":
-			out.Values[i] = ec._Rating_movieId(ctx, field, obj)
+		case "movie":
+			out.Values[i] = ec._Rating_movie(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -28,10 +28,10 @@ type Query struct {
 }
 
 type Rating struct {
-	ID      string `json:"id"`
-	UserID  string `json:"userId"`
-	MovieID string `json:"movieId"`
-	Score   int    `json:"score"`
+	ID    string `json:"id"`
+	User  *User  `json:"user"`
+	Movie *Movie `json:"movie"`
+	Score int    `json:"score"`
 }
 
 type User struct {

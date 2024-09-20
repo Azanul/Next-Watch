@@ -32,8 +32,8 @@ type User {
 
 type Rating {
   id: ID!
-  userId: ID!
-  movieId: ID!
+  user: User!
+  movie: Movie!
   score: Int!
 }
 
@@ -50,8 +50,7 @@ type Query {
 }
 
 type Mutation {
-  rateMovie(movieId: ID!, rating: Int!): Rating!
-  updateRating(id: ID!, score: Int!): Rating!
+  rateMovie(movieId: ID!, score: Int!): Rating!
   deleteRating(id: ID!): Boolean!
     
   # Admin-only mutations
