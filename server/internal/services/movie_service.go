@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Azanul/Next-Watch/graph/model"
 	"github.com/Azanul/Next-Watch/internal/models"
@@ -35,14 +36,16 @@ func (s *MovieService) GetMovieByID(ctx context.Context, movieID uuid.UUID) (*mo
 	return s.movieRepo.GetByID(ctx, movieID)
 }
 
-func (s *MovieService) GetMovieByTitle(ctx context.Context, userID, title string) (*models.Movie, error) {
-	// Implementation to fetch rating from database
+func (s *MovieService) GetMovieByTitle(ctx context.Context, title string) (*models.Movie, error) {
+	return s.movieRepo.GetByTitle(ctx, title)
 }
 
 func (s *MovieService) UpdateMovie(ctx context.Context, movie *model.Movie) (*models.Movie, error) {
-	// Implementation to update rating in database
+	// Implementation to update movie in database
+	return nil, errors.New("not implemented")
 }
 
 func (s *MovieService) DeleteMovie(ctx context.Context, movie *model.Movie) (*model.Movie, error) {
-	// Implementation to create new rating in database
+	// Implementation to create new movie in database
+	return nil, errors.New("not implemented")
 }
