@@ -2,25 +2,41 @@
 
 package model
 
-type Mutation struct {
+type Movie struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
+	Genre string `json:"genre"`
+	Year  int    `json:"year"`
+	Wiki  string `json:"wiki"`
+	Plot  string `json:"plot"`
+	Cast  string `json:"cast"`
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type MovieInput struct {
+	Title string `json:"title"`
+	Genre string `json:"genre"`
+	Year  int    `json:"year"`
+	Wiki  string `json:"wiki"`
+	Plot  string `json:"plot"`
+	Cast  string `json:"cast"`
+}
+
+type Mutation struct {
 }
 
 type Query struct {
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type Rating struct {
+	ID      string `json:"id"`
+	UserID  string `json:"userId"`
+	MovieID string `json:"movieId"`
+	Score   int    `json:"score"`
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID           string `json:"id"`
+	Email        string `json:"email"`
+	PasswordHash string `json:"passwordHash"`
+	Role         string `json:"role"`
 }

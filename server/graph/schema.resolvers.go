@@ -11,14 +11,84 @@ import (
 	"github.com/Azanul/Next-Watch/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// RateMovie is the resolver for the rateMovie field.
+func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, rating int) (*model.Rating, error) {
+	panic(fmt.Errorf("not implemented: RateMovie - rateMovie"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// UpdateRating is the resolver for the updateRating field.
+func (r *mutationResolver) UpdateRating(ctx context.Context, id string, score int) (*model.Rating, error) {
+	panic(fmt.Errorf("not implemented: UpdateRating - updateRating"))
+}
+
+// DeleteRating is the resolver for the deleteRating field.
+func (r *mutationResolver) DeleteRating(ctx context.Context, id string) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteRating - deleteRating"))
+}
+
+// CreateMovie is the resolver for the createMovie field.
+func (r *mutationResolver) CreateMovie(ctx context.Context, input model.MovieInput) (*model.Movie, error) {
+	panic(fmt.Errorf("not implemented: CreateMovie - createMovie"))
+}
+
+// UpdateMovie is the resolver for the updateMovie field.
+func (r *mutationResolver) UpdateMovie(ctx context.Context, id string, input model.MovieInput) (*model.Movie, error) {
+	panic(fmt.Errorf("not implemented: UpdateMovie - updateMovie"))
+}
+
+// DeleteMovie is the resolver for the deleteMovie field.
+func (r *mutationResolver) DeleteMovie(ctx context.Context, id string) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteMovie - deleteMovie"))
+}
+
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, username string, email string, password string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+}
+
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, username *string, email *string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+}
+
+// DeleteUser is the resolver for the deleteUser field.
+func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
+}
+
+// Movie is the resolver for the movie field.
+func (r *queryResolver) Movie(ctx context.Context, id string) (*model.Movie, error) {
+	panic(fmt.Errorf("not implemented: Movie - movie"))
+}
+
+// Movies is the resolver for the movies field.
+func (r *queryResolver) Movies(ctx context.Context) ([]*model.Movie, error) {
+	panic(fmt.Errorf("not implemented: Movies - movies"))
+}
+
+// Recommendations is the resolver for the recommendations field.
+func (r *queryResolver) Recommendations(ctx context.Context, userID string) ([]*model.Movie, error) {
+	panic(fmt.Errorf("not implemented: Recommendations - recommendations"))
+}
+
+// Ratings is the resolver for the ratings field.
+func (r *queryResolver) Ratings(ctx context.Context, userID string) ([]*model.Rating, error) {
+	panic(fmt.Errorf("not implemented: Ratings - ratings"))
+}
+
+// AllUsers is the resolver for the allUsers field.
+func (r *queryResolver) AllUsers(ctx context.Context) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented: AllUsers - allUsers"))
+}
+
+// AllRatings is the resolver for the allRatings field.
+func (r *queryResolver) AllRatings(ctx context.Context) ([]*model.Rating, error) {
+	panic(fmt.Errorf("not implemented: AllRatings - allRatings"))
+}
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: User - user"))
 }
 
 // Mutation returns MutationResolver implementation.

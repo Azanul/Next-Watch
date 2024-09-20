@@ -2,8 +2,19 @@
 #
 # https://gqlgen.com/getting-started/
 
+directive @hasRole(role: String!) on FIELD_DEFINITION | OBJECT
+
 type Movie {
   id: ID!
+  title: String!
+  genre: String!
+  year: Int!
+  wiki: String!
+  plot: String!
+  cast: String!
+}
+
+input MovieInput {
   title: String!
   genre: String!
   year: Int!
@@ -16,6 +27,7 @@ type User {
   id: ID!
   email: String!
   passwordHash: String!
+  role: String!
 }
 
 type Rating {
