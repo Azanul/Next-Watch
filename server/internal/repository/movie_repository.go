@@ -18,6 +18,64 @@ func NewMovieRepository(db *sql.DB) *MovieRepository {
 	return &MovieRepository{db: db}
 }
 
+type MoviePage struct {
+	Movies          []*models.Movie
+	TotalCount      int
+	HasNextPage     bool
+	HasPreviousPage bool
+}
+
+func (r *MovieRepository) GetMovies(ctx context.Context, page, pageSize int) (*MoviePage, error) {
+	offset := (page - 1) * pageSize
+
+	// Query to get the movies for the current page
+	query := `
+    SELECT id, title, genre, year
+    FROM movies
+    ORDER BY id
+    LIMIT $1 OFFSET $2
+    `
+
+	rows, err := r.db.QueryContext(ctx, query, pageSize+1, offset) // We fetch one extra to determine if there's a next page
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var movies []*models.Movie
+	for rows.Next() {
+		var movie models.Movie
+		err := rows.Scan(&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast)
+		if err != nil {
+			return nil, err
+		}
+		movies = append(movies, &movie)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Query to get the total count of movies
+	var totalCount int
+	err = r.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM movies").Scan(&totalCount)
+	if err != nil {
+		return nil, err
+	}
+
+	hasNextPage := len(movies) > pageSize
+	if hasNextPage {
+		movies = movies[:pageSize]
+	}
+
+	return &MoviePage{
+		Movies:          movies,
+		TotalCount:      totalCount,
+		HasNextPage:     hasNextPage,
+		HasPreviousPage: page > 1,
+	}, nil
+}
+
 func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Movie, error) {
 	query := `SELECT id, title, genre, year, wiki, plot, cast 
               FROM movies 

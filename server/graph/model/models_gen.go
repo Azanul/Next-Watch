@@ -12,6 +12,16 @@ type Movie struct {
 	Cast  string `json:"cast"`
 }
 
+type MovieConnection struct {
+	Edges      []*MovieEdge `json:"edges"`
+	PageInfo   *PageInfo    `json:"pageInfo"`
+	TotalCount int          `json:"totalCount"`
+}
+
+type MovieEdge struct {
+	Node *Movie `json:"node"`
+}
+
 type MovieInput struct {
 	Title string `json:"title"`
 	Genre string `json:"genre"`
@@ -22,6 +32,11 @@ type MovieInput struct {
 }
 
 type Mutation struct {
+}
+
+type PageInfo struct {
+	HasNextPage     bool `json:"hasNextPage"`
+	HasPreviousPage bool `json:"hasPreviousPage"`
 }
 
 type Query struct {

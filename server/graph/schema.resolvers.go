@@ -84,12 +84,67 @@ func (r *mutationResolver) DeleteRating(ctx context.Context, id string) (bool, e
 
 // Movie is the resolver for the movie field.
 func (r *queryResolver) Movie(ctx context.Context, id string) (*model.Movie, error) {
-	panic(fmt.Errorf("not implemented: Movie - movie"))
+	movieID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, errors.New("invalid movie ID")
+	}
+
+	// Fetch the movie
+	movie, err := r.MovieService.GetMovieByID(ctx, movieID)
+	if err != nil {
+		return nil, err
+	}
+	if movie == nil {
+		return nil, errors.New("movie not found")
+	}
+	return &model.Movie{
+		ID:    movieID.String(),
+		Title: movie.Title,
+		Genre: movie.Genre,
+		Year:  movie.Year,
+		Wiki:  movie.Wiki,
+		Plot:  movie.Plot,
+		Cast:  movie.Cast,
+	}, nil
 }
 
 // Movies is the resolver for the movies field.
-func (r *queryResolver) Movies(ctx context.Context) ([]*model.Movie, error) {
-	panic(fmt.Errorf("not implemented: Movies - movies"))
+func (r *queryResolver) Movies(ctx context.Context, page int, pageSize int) (*model.MovieConnection, error) {
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10 // Default page size
+	}
+
+	moviePage, err := r.MovieService.GetMovies(ctx, page, pageSize)
+	if err != nil {
+		return nil, err
+	}
+
+	edges := make([]*model.MovieEdge, len(moviePage.Movies))
+	for i, movie := range moviePage.Movies {
+		edges[i] = &model.MovieEdge{
+			Node: &model.Movie{
+				ID:    movie.ID.String(),
+				Title: movie.Title,
+				Genre: movie.Genre,
+				Year:  movie.Year,
+				Wiki:  movie.Wiki,
+				Plot:  movie.Plot,
+				Cast:  movie.Cast,
+			},
+		}
+	}
+
+	return &model.MovieConnection{
+		Edges: edges,
+		PageInfo: &model.PageInfo{
+			HasNextPage:     moviePage.HasNextPage,
+			HasPreviousPage: moviePage.HasPreviousPage,
+		},
+		TotalCount: moviePage.TotalCount,
+	}, nil
 }
 
 // Recommendations is the resolver for the recommendations field.
@@ -115,27 +170,3 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *mutationResolver) CreateUser(ctx context.Context, username string, email string, password string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
-}
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, username *string, email *string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
-}
-func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
-}
-func (r *queryResolver) AllUsers(ctx context.Context) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: AllUsers - allUsers"))
-}
-func (r *queryResolver) AllRatings(ctx context.Context) ([]*model.Rating, error) {
-	panic(fmt.Errorf("not implemented: AllRatings - allRatings"))
-}
-*/

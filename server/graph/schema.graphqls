@@ -37,9 +37,24 @@ type Rating {
   score: Int!
 }
 
+type MovieConnection {
+  edges: [MovieEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type MovieEdge {
+  node: Movie!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
 type Query {
   movie(id: ID!): Movie
-  movies: [Movie!]!
+  movies(page: Int!, pageSize: Int!): MovieConnection!
   recommendations(userId: ID!): [Movie!]!
   ratings(userId: ID!): [Rating!]!
   user(id: ID!): User!
