@@ -19,6 +19,25 @@ func NewRatingRepository(db *sql.DB) *RatingRepository {
 	return &RatingRepository{db: db}
 }
 
+func (r *RatingRepository) GetByID(ctx context.Context, ratingID uuid.UUID) (*models.Rating, error) {
+	query := `SELECT user_id, movie_id, score, created_at, updated_at 
+              FROM ratings 
+              WHERE id = $1`
+
+	var rating models.Rating
+	err := r.db.QueryRowContext(ctx, query, ratingID).Scan(
+		&rating.UserID, &rating.MovieID, &rating.Score, &rating.CreatedAt, &rating.UpdatedAt,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	rating.ID = ratingID
+	return &rating, nil
+}
+
 func (r *RatingRepository) GetByUserAndMovie(ctx context.Context, userID, movieID uuid.UUID) (*models.Rating, error) {
 	query := `SELECT id, user_id, movie_id, score, created_at, updated_at 
               FROM ratings 
@@ -62,10 +81,26 @@ func (r *RatingRepository) Update(ctx context.Context, rating *models.Rating) er
 	return err
 }
 
-func (r *RatingRepository) Delete(ctx context.Context, rating *models.Rating) error {
-	query := `DELETE ratings 
-              WHERE id = $1`
+func (r *RatingRepository) Delete(ctx context.Context, ratingID uuid.UUID) (*models.Rating, error) {
+	query := `DELETE FROM ratings 
+              WHERE id = $1
+              RETURNING id, user_id, movie_id, score, created_at, updated_at`
 
-	_, err := r.db.ExecContext(ctx, query, rating.ID)
-	return err
+	var deletedRating models.Rating
+	err := r.db.QueryRowContext(ctx, query, ratingID).Scan(
+		&deletedRating.ID,
+		&deletedRating.UserID,
+		&deletedRating.MovieID,
+		&deletedRating.Score,
+		&deletedRating.CreatedAt,
+		&deletedRating.UpdatedAt,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &deletedRating, nil
 }
