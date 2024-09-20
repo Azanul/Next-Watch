@@ -82,36 +82,6 @@ func (r *mutationResolver) DeleteRating(ctx context.Context, id string) (bool, e
 	return r.RatingService.DeleteRating(ctx, ratingID)
 }
 
-// CreateMovie is the resolver for the createMovie field.
-func (r *mutationResolver) CreateMovie(ctx context.Context, input model.MovieInput) (*model.Movie, error) {
-	panic(fmt.Errorf("not implemented: CreateMovie - createMovie"))
-}
-
-// UpdateMovie is the resolver for the updateMovie field.
-func (r *mutationResolver) UpdateMovie(ctx context.Context, id string, input model.MovieInput) (*model.Movie, error) {
-	panic(fmt.Errorf("not implemented: UpdateMovie - updateMovie"))
-}
-
-// DeleteMovie is the resolver for the deleteMovie field.
-func (r *mutationResolver) DeleteMovie(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteMovie - deleteMovie"))
-}
-
-// CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, username string, email string, password string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
-}
-
-// UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, username *string, email *string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
-}
-
-// DeleteUser is the resolver for the deleteUser field.
-func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
-}
-
 // Movie is the resolver for the movie field.
 func (r *queryResolver) Movie(ctx context.Context, id string) (*model.Movie, error) {
 	panic(fmt.Errorf("not implemented: Movie - movie"))
@@ -132,16 +102,6 @@ func (r *queryResolver) Ratings(ctx context.Context, userID string) ([]*model.Ra
 	panic(fmt.Errorf("not implemented: Ratings - ratings"))
 }
 
-// AllUsers is the resolver for the allUsers field.
-func (r *queryResolver) AllUsers(ctx context.Context) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: AllUsers - allUsers"))
-}
-
-// AllRatings is the resolver for the allRatings field.
-func (r *queryResolver) AllRatings(ctx context.Context) ([]*model.Rating, error) {
-	panic(fmt.Errorf("not implemented: AllRatings - allRatings"))
-}
-
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	panic(fmt.Errorf("not implemented: User - user"))
@@ -155,3 +115,27 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *mutationResolver) CreateUser(ctx context.Context, username string, email string, password string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+}
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, username *string, email *string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+}
+func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (bool, error) {
+	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
+}
+func (r *queryResolver) AllUsers(ctx context.Context) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented: AllUsers - allUsers"))
+}
+func (r *queryResolver) AllRatings(ctx context.Context) ([]*model.Rating, error) {
+	panic(fmt.Errorf("not implemented: AllRatings - allRatings"))
+}
+*/
