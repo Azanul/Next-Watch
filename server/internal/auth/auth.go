@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Azanul/Next-Watch/graph/model"
+	"github.com/Azanul/Next-Watch/internal/models"
 )
 
-func GetUserFromContext(ctx context.Context) (*model.User, error) {
+func GetUserFromContext(ctx context.Context) (*models.User, error) {
 	user := ctx.Value("user")
 
 	if user == nil {
 		return nil, errors.New("user not found")
 	}
-	return user.(*model.User), nil
+	return user.(*models.User), nil
 }

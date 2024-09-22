@@ -55,7 +55,7 @@ type PageInfo {
 type Query {
   movie(id: ID!): Movie
   movies(page: Int!, pageSize: Int!): MovieConnection!
-  recommendations(userId: ID!): [Movie!]!
+  recommendations(page: Int!, pageSize: Int!): MovieConnection!
   ratings(userId: ID!): [Rating!]!
   user(id: ID!): User!
     

@@ -22,10 +22,7 @@ func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score 
 	}
 
 	// Validate inputs
-	var currentUserUUID, movieUUID uuid.UUID
-	if currentUserUUID, err = uuid.Parse(currentUser.ID); err != nil {
-		return nil, errors.New("Invalid user id")
-	}
+	var movieUUID uuid.UUID
 	if movieUUID, err = uuid.Parse(movieID); err != nil {
 		return nil, errors.New("Invalid movie id")
 	}
@@ -34,7 +31,7 @@ func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score 
 	}
 
 	// Call service to rate movie
-	rating, err := r.RatingService.RateMovie(ctx, currentUserUUID, movieUUID, score)
+	rating, err := r.RatingService.RateMovie(ctx, currentUser.ID, movieUUID, score)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +69,7 @@ func (r *mutationResolver) DeleteRating(ctx context.Context, id string) (bool, e
 
 	// Check if the user is authorized to delete this rating
 	isAdmin := currentUser.Role == "ADMIN"
-	isOwner := rating.UserID.String() == currentUser.ID
+	isOwner := rating.UserID == currentUser.ID
 
 	if !isAdmin && !isOwner {
 		return false, errors.New("not authorized to delete this rating")
@@ -148,8 +145,48 @@ func (r *queryResolver) Movies(ctx context.Context, page int, pageSize int) (*mo
 }
 
 // Recommendations is the resolver for the recommendations field.
-func (r *queryResolver) Recommendations(ctx context.Context, userID string) ([]*model.Movie, error) {
-	panic(fmt.Errorf("not implemented: Recommendations - recommendations"))
+func (r *queryResolver) Recommendations(ctx context.Context, page int, pageSize int) (*model.MovieConnection, error) {
+	// Get current user from context
+	currentUser, err := auth.GetUserFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10 // Default page size
+	}
+
+	moviePage, err := r.RecommendationService.GetSimilarMovies(ctx, currentUser.Taste, page, pageSize)
+	if err != nil {
+		return nil, err
+	}
+
+	edges := make([]*model.MovieEdge, len(moviePage.Movies))
+	for i, movie := range moviePage.Movies {
+		edges[i] = &model.MovieEdge{
+			Node: &model.Movie{
+				ID:    movie.ID.String(),
+				Title: movie.Title,
+				Genre: movie.Genre,
+				Year:  movie.Year,
+				Wiki:  movie.Wiki,
+				Plot:  movie.Plot,
+				Cast:  movie.Cast,
+			},
+		}
+	}
+
+	return &model.MovieConnection{
+		Edges: edges,
+		PageInfo: &model.PageInfo{
+			HasNextPage:     moviePage.HasNextPage,
+			HasPreviousPage: moviePage.HasPreviousPage,
+		},
+		TotalCount: moviePage.TotalCount,
+	}, nil
 }
 
 // Ratings is the resolver for the ratings field.

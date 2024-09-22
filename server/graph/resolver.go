@@ -9,4 +9,5 @@ import "github.com/Azanul/Next-Watch/internal/services"
 type Resolver struct {
 	services.RatingService
 	services.MovieService
+	services.RecommendationService
 }
