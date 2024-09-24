@@ -18,7 +18,6 @@ func ConnectDB() *sql.DB {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
