@@ -54,10 +54,9 @@ func main() {
 	http.HandleFunc("/auth/signin/google", cors(restHandler.GoogleSignin))
 	http.HandleFunc("/auth/callback/google", restHandler.GoogleCallback)
 
-	http.Handle("/query", restHandler.AuthMiddleware(srv))
+	http.HandleFunc("/query", cors(http.HandlerFunc(restHandler.AuthMiddleware(srv).ServeHTTP)))
 	http.Handle("/", http.FileServer(http.Dir("./build")))
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
@@ -79,9 +78,15 @@ func hasRoleDirective(ctx context.Context, obj interface{}, next graphql.Resolve
 func cors(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:64139")
-		w.Header().Set("Access-Control-Allow-Methods", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
 		h(w, r)
 	}
 }

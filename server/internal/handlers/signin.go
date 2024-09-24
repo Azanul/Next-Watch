@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -69,7 +68,6 @@ func (h *Handler) GoogleSignin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	token, err := h.googleAuthClient.Callback(r.FormValue("code"), r.FormValue("state"))
 	if err != nil {
-		log.Println(err)
 		http.Error(w, "Failed to exchange token", http.StatusInternalServerError)
 		return
 	}
@@ -84,5 +82,5 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: false, // Set to true in production
 	})
 
-	http.Redirect(w, r, "http://localhost:64139/dashboard", http.StatusFound)
+	http.Redirect(w, r, "http://localhost:64139/", http.StatusFound)
 }
