@@ -1,12 +1,10 @@
 .PHONY: build env frontend backend
 
-build:
-	frontend
-	mv out ../server/frontend
-	backend
+build: frontend backend
 
 frontend:
 	cd frontend && npm run build
+	cd frontend && mv out ../server/frontend
 
 backend:
 	cd server && go generate ./...
