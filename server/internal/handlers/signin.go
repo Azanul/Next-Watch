@@ -33,6 +33,13 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 		}
 		claims, err := h.googleAuthClient.ValidateToken(cookie.Value)
 		if err != nil {
+			http.SetCookie(w, &http.Cookie{
+				Name:     "access_token",
+				Value:    "",
+				Path:     "/",
+				MaxAge:   -1,
+				HttpOnly: true,
+			})
 			http.Error(w, "Invalid Google token", http.StatusUnauthorized)
 			return
 		}
@@ -77,5 +84,5 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: false, // Set to true in production
 	})
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, "http://localhost:64139/dashboard", http.StatusFound)
 }
