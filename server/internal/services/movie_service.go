@@ -14,6 +14,12 @@ type MovieService struct {
 	movieRepo *repository.MovieRepository
 }
 
+func NewMovieService(movieRepo *repository.MovieRepository) *MovieService {
+	return &MovieService{
+		movieRepo: movieRepo,
+	}
+}
+
 // func (s *MovieService) CreateMovie(ctx context.Context, movie *model.Movie) (*models.Movie, error) {
 // 	movieID := uuid.New()
 

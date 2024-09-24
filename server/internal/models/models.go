@@ -21,6 +21,7 @@ type Movie struct {
 type User struct {
 	ID        uuid.UUID       `json:"id"`
 	Email     string          `json:"email"`
+	Name      string          `json:"name"`
 	Role      string          `json:"role"`
 	Taste     pgvector.Vector `json:"-"`
 	CreatedAt time.Time       `json:"createdAt"`

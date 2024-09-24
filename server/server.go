@@ -11,6 +11,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Azanul/Next-Watch/graph"
 	"github.com/Azanul/Next-Watch/internal/auth"
+	"github.com/Azanul/Next-Watch/internal/database"
+	"github.com/Azanul/Next-Watch/internal/handlers"
+	"github.com/Azanul/Next-Watch/internal/repository"
+	"github.com/Azanul/Next-Watch/internal/services"
 )
 
 const defaultPort = "8080"
@@ -21,17 +25,37 @@ func main() {
 		port = defaultPort
 	}
 
+	logFile := initLogFile()
+	defer logFile.Close()
+
+	db := database.ConnectDB()
+
+	userRepo := repository.NewUserRepository(db)
+	movieRepo := repository.NewMovieRepository(db)
+	ratingRepo := repository.NewRatingRepository(db)
+
+	userService := services.NewUserService(userRepo, movieRepo)
+	movieService := services.NewMovieService(movieRepo)
+	ratingService := services.NewRatingService(ratingRepo, movieRepo)
+	recommendationService := services.NewRecommendationService(ratingRepo, movieRepo)
+
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(
 		graph.Config{
-			Resolvers: &graph.Resolver{},
+			Resolvers: &graph.Resolver{
+				RatingService: *ratingService, MovieService: *movieService, RecommendationService: *recommendationService,
+			},
 			Directives: graph.DirectiveRoot{
 				HasRole: hasRoleDirective,
 			},
 		},
 	))
+	restHandler := handlers.NewHandler(userService, auth.NewGoogleAuthClient())
 
+	http.HandleFunc("/auth/signin/google", cors(restHandler.GoogleSignin))
+	http.HandleFunc("/auth/callback/google", restHandler.GoogleCallback)
+
+	http.Handle("/query", restHandler.AuthMiddleware(srv))
 	http.Handle("/", http.FileServer(http.Dir("./build")))
-	http.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -52,11 +76,23 @@ func hasRoleDirective(ctx context.Context, obj interface{}, next graphql.Resolve
 	return next(ctx)
 }
 
-//func cors(h http.HandlerFunc) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		w.Header().Set("Access-Control-Allow-Origin", "*")
-//		w.Header().Set("Access-Control-Allow-Methods", "*")
-//		w.Header().Set("Access-Control-Allow-Headers", "*")
-//		h(w, r)
-//	}
-//}
+func cors(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:64139")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		h(w, r)
+	}
+}
+
+// Function to initialize the log file and set the log output to the file
+func initLogFile() *os.File {
+	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Failed to open log file: %v", err)
+	}
+	log.SetOutput(logFile)
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	return logFile
+}
