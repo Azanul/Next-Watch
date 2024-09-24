@@ -82,5 +82,5 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: false, // Set to true in production
 	})
 
-	http.Redirect(w, r, "http://localhost:64139/", http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
