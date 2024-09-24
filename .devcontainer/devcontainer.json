@@ -7,7 +7,7 @@
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {},
 		"ghcr.io/balazs23/devcontainers-features/bazel:1": {}
-	}
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -16,7 +16,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "go version",
+	"postCreateCommand": "go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
