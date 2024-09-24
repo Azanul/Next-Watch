@@ -55,7 +55,7 @@ func main() {
 	http.HandleFunc("/auth/callback/google", restHandler.GoogleCallback)
 
 	http.HandleFunc("/query", cors(http.HandlerFunc(restHandler.AuthMiddleware(srv).ServeHTTP)))
-	http.Handle("/", http.FileServer(http.Dir("./build")))
+	http.Handle("/", http.FileServer(getFrontendFileSystem()))
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

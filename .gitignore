@@ -3,3 +3,5 @@ movie-plots.json
 *.env
 *.env.sh
 *.log
+server/frontend
+app
