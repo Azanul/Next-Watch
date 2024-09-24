@@ -31,7 +31,7 @@ func (r *MovieRepository) GetMovies(ctx context.Context, page, pageSize int) (*M
 
 	// Query to get the movies for the current page
 	query := `
-    SELECT id, title, genre, year
+    SELECT id, title, genre, year, wiki, plot, director, "cast"
     FROM movies
     ORDER BY id
     LIMIT $1 OFFSET $2
@@ -46,7 +46,7 @@ func (r *MovieRepository) GetMovies(ctx context.Context, page, pageSize int) (*M
 	var movies []*models.Movie
 	for rows.Next() {
 		var movie models.Movie
-		err := rows.Scan(&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast)
+		err := rows.Scan(&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Director, &movie.Cast)
 		if err != nil {
 			return nil, err
 		}
@@ -96,13 +96,13 @@ func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Mo
 }
 
 func (r *MovieRepository) GetByTitle(ctx context.Context, title string) (*models.Movie, error) {
-	query := `SELECT id, genre, year, wiki, plot, cast 
+	query := `SELECT id, genre, year, wiki, plot, director, cast 
               FROM movies 
               WHERE title = $1`
 
 	var movie models.Movie
 	err := r.db.QueryRowContext(ctx, query, title).Scan(
-		&movie.ID, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast,
+		&movie.ID, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Director, &movie.Cast,
 	)
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -118,7 +118,7 @@ func (r *MovieRepository) GetSimilarMovies(ctx context.Context, embedding pgvect
 	offset := (page - 1) * pageSize
 
 	// Query to get the movies similar to taste
-	query := `SELECT id, title, genre, release_year FROM movies 
+	query := `SELECT id, title, genre, year, wiki, plot, director, cast FROM movies 
 	ORDER BY embedding <-> $1 
 	LIMIT $2 OFFSET $3`
 
@@ -131,7 +131,7 @@ func (r *MovieRepository) GetSimilarMovies(ctx context.Context, embedding pgvect
 	var movies []*models.Movie
 	for rows.Next() {
 		var movie models.Movie
-		err := rows.Scan(&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast)
+		err := rows.Scan(&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Director, &movie.Cast)
 		if err != nil {
 			return nil, err
 		}
@@ -163,21 +163,21 @@ func (r *MovieRepository) GetSimilarMovies(ctx context.Context, embedding pgvect
 }
 
 func (r *MovieRepository) Create(ctx context.Context, movie *models.Movie) error {
-	query := `INSERT INTO movies (id, title, genre, year, wiki, plot, cast, embedding) 
+	query := `INSERT INTO movies (id, title, genre, year, wiki, plot, director, cast, embedding) 
               VALUES ($1, $2, $3, $4, $5, $6)`
 
 	movie.ID = uuid.New()
 
 	_, err := r.db.ExecContext(ctx, query,
-		movie.ID, movie.Genre, movie.Year, movie.Wiki, movie.Plot, movie.Cast, movie.Embedding,
+		movie.ID, movie.Genre, movie.Year, movie.Wiki, movie.Plot, movie.Director, movie.Cast, movie.Embedding,
 	)
 	return err
 }
 
 func (r *MovieRepository) Update(ctx context.Context, movie *models.Movie) error {
 	query := `UPDATE movies 
-              SET title = $1, genre = $2, year = $3, wiki = $4, plot = $5, cast = $6, embedding = $7
-              WHERE id = $8`
+              SET title = $1, genre = $2, year = $3, wiki = $4, plot = $5, director = $6, cast = $7, embedding = $8
+              WHERE id = $9`
 
 	_, err := r.db.ExecContext(ctx, query, movie.Title, movie.Genre, movie.Year, movie.Wiki, movie.Plot, movie.Cast, movie.Embedding, movie.ID)
 	return err

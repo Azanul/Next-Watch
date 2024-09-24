@@ -14,6 +14,7 @@ type Movie struct {
 	Year      int       `json:"year"`
 	Wiki      string    `json:"wiki"`
 	Plot      string    `json:"plot"`
+	Director  string    `json:"director"`
 	Cast      string    `json:"cast"`
 	Embedding pgvector.Vector
 }
