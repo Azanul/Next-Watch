@@ -1,3 +1,4 @@
 ca.pem
 movie-plots.json
 *.env
+*.env.sh
