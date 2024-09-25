@@ -1,8 +1,8 @@
-"use client"
-
 import { useQuery } from '@apollo/client';
 import { GET_MOVIES } from '../graphql/queries';
 import { useEffect, useState } from 'react';
+import MovieCard from './MovieCard';
+import getWikipediaImage from '@/lib/getImage';
 
 interface MovieNode {
     wiki: string;
@@ -26,25 +26,6 @@ interface MoviesData {
 
 interface MovieImages {
     [key: string]: string;
-}
-
-async function getWikipediaImage(wikiUrl: string): Promise<string | null> {
-    const pageTitle = wikiUrl.split('/wiki/')[1];
-    const apiUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=${pageTitle}&format=json&prop=text&origin=*`;
-
-    try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        const pageContent = data.parse.text['*'];
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(pageContent, 'text/html');
-        const infobox = doc.querySelector('.infobox');
-        const img = infobox?.querySelector('img');
-        return img ? `https:${img.getAttribute('src')}` : null;
-    } catch (error) {
-        console.error('Error fetching Wikipedia image:', error);
-        return null;
-    }
 }
 
 export default function MoviesComponent() {
@@ -80,17 +61,14 @@ export default function MoviesComponent() {
             <h2 className="text-2xl text-sky-400 font-bold mb-4">Movies</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {movies.map(({ node }) => (
-                    <div key={node.id} className="rounded-lg shadow-md overflow-hidden">
-                        <div
-                            className="h-48 bg-cover bg-center"
-                            style={{ backgroundImage: `url(${movieImages[node.id] || ''})` }}
-
-                        />
-                        <div key={node.id} className="bg-sky-400 p-2 h-full rounded shadow-md">
-                            <h3 className="font-semibold text-white">{node.title}</h3>
-                            <p className="text-sky-100">{node.genre} - {node.year}</p>
-                        </div>
-                    </div>
+                    <MovieCard
+                        key={node.id}
+                        id={node.id}
+                        title={node.title}
+                        genre={node.genre}
+                        year={node.year}
+                        imageUrl={movieImages[node.id] || ''}
+                    />
                 ))}
             </div>
             <div className="mt-8 flex justify-between">

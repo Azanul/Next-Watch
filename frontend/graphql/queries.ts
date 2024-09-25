@@ -40,3 +40,17 @@ export const GET_RECOMMENDATIONS = gql`
     }
   }
 `;
+
+export const GET_MOVIE_BY_TITLE = gql`
+  query GetMovieByTitle($title: String!) {
+    movieByTitle(title: $title) {
+      id
+      title
+      genre
+      year
+      wiki
+      plot
+      cast
+    }
+  }
+`;
