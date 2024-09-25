@@ -4,4 +4,3 @@ movie-plots.json
 *.env.sh
 *.log
 server/frontend
-app

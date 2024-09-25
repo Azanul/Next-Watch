@@ -78,7 +78,7 @@ func (r *MovieRepository) GetMovies(ctx context.Context, page, pageSize int) (*M
 }
 
 func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Movie, error) {
-	query := `SELECT id, title, genre, year, wiki, plot, cast 
+	query := `SELECT id, title, genre, year, wiki, plot, "cast" 
               FROM movies 
               WHERE id = $1`
 
@@ -96,7 +96,7 @@ func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Mo
 }
 
 func (r *MovieRepository) GetByTitle(ctx context.Context, title string) (*models.Movie, error) {
-	query := `SELECT id, genre, year, wiki, plot, director, cast 
+	query := `SELECT id, genre, year, wiki, plot, director, "cast" 
               FROM movies 
               WHERE title = $1`
 
@@ -118,7 +118,7 @@ func (r *MovieRepository) GetSimilarMovies(ctx context.Context, embedding pgvect
 	offset := (page - 1) * pageSize
 
 	// Query to get the movies similar to taste
-	query := `SELECT id, title, genre, year, wiki, plot, director, cast FROM movies 
+	query := `SELECT id, title, genre, year, wiki, plot, director, "cast" FROM movies 
 	ORDER BY embedding <-> $1 
 	LIMIT $2 OFFSET $3`
 
@@ -163,7 +163,7 @@ func (r *MovieRepository) GetSimilarMovies(ctx context.Context, embedding pgvect
 }
 
 func (r *MovieRepository) Create(ctx context.Context, movie *models.Movie) error {
-	query := `INSERT INTO movies (id, title, genre, year, wiki, plot, director, cast, embedding) 
+	query := `INSERT INTO movies (id, title, genre, year, wiki, plot, director, "cast", embedding) 
               VALUES ($1, $2, $3, $4, $5, $6)`
 
 	movie.ID = uuid.New()
@@ -176,7 +176,7 @@ func (r *MovieRepository) Create(ctx context.Context, movie *models.Movie) error
 
 func (r *MovieRepository) Update(ctx context.Context, movie *models.Movie) error {
 	query := `UPDATE movies 
-              SET title = $1, genre = $2, year = $3, wiki = $4, plot = $5, director = $6, cast = $7, embedding = $8
+              SET title = $1, genre = $2, year = $3, wiki = $4, plot = $5, director = $6, "cast" = $7, embedding = $8
               WHERE id = $9`
 
 	_, err := r.db.ExecContext(ctx, query, movie.Title, movie.Genre, movie.Year, movie.Wiki, movie.Plot, movie.Cast, movie.Embedding, movie.ID)

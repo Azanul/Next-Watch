@@ -1,4 +1,4 @@
-.PHONY: build env frontend backend
+.PHONY: build env frontend backend graphql-schema
 
 build: frontend backend
 
@@ -12,3 +12,7 @@ backend:
 
 env:
 	@grep -v '^#' .env | sed 's/^/export /' > .env.sh
+
+graphql-schema:
+	cd server && go get github.com/99designs/gqlgen
+	cd server && go run github.com/99designs/gqlgen generate
