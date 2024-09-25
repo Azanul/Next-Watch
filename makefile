@@ -3,7 +3,7 @@
 build: frontend backend
 
 frontend:
-	cd frontend && num install && npm run build
+	cd frontend && npm install && npm run build
 	cd frontend && mv out ../server/frontend
 
 backend:
