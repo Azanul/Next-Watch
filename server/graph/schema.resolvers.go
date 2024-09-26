@@ -26,8 +26,8 @@ func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score 
 	if movieUUID, err = uuid.Parse(movieID); err != nil {
 		return nil, errors.New("invalid movie id")
 	}
-	if score < 1 || score > 5 {
-		return nil, errors.New("rating score must be between 1 and 5")
+	if score < 0 || score > 5 {
+		return nil, errors.New("rating score must be between 0 and 5")
 	}
 
 	// Call service to rate movie
