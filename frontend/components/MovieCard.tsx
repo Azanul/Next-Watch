@@ -8,7 +8,7 @@ interface MovieCardProps {
   imageUrl: string;
 }
 
-export default function MovieCard({ id, title, genre, year, imageUrl }: MovieCardProps) {
+export default function MovieCard({ title, genre, year, imageUrl }: MovieCardProps) {
   const router = useRouter();
 
   const handleClick = () => {
