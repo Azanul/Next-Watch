@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ApolloWrapper } from "@/components/ApolloWrapper";
 import FormbricksProvider from "./formbricks";
+import { Suspense } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,8 +26,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-sans)] bg-gradient-to-b from-sky-400 to-sky-200`}
       >
-        <ApolloWrapper>{children}</ApolloWrapper>
-        <FormbricksProvider />
+        <Suspense>
+
+          <ApolloWrapper>{children}</ApolloWrapper>
+          <FormbricksProvider />
+        </Suspense>
       </body>
     </html>
   );
