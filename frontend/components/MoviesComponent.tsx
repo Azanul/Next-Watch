@@ -68,6 +68,7 @@ export default function MoviesComponent({ queryType, searchTerm }: MoviesCompone
                 ? { query: searchTerm, page, pageSize }
                 : { page, pageSize },
             notifyOnNetworkStatusChange: true,
+            fetchPolicy: queryType === 'GET_RECOMMENDATIONS' ? 'no-cache' : 'cache-first',
         }
     );
 
