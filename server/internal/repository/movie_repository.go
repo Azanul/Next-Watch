@@ -29,20 +29,33 @@ type MoviePage struct {
 func (r *MovieRepository) GetMovies(ctx context.Context, searchTerm string, page, pageSize int) (*MoviePage, error) {
 	offset := (page - 1) * pageSize
 
-	var query, countQuery string
+	var rows *sql.Rows
+	var err error
+	var totalCount int
 	if searchTerm == "" {
 		// Query to get the movies for the current page
-		query = `
+		query := `
 		SELECT id, title, genre, year, wiki, plot, director, "cast"
     FROM movies
     ORDER BY id
     LIMIT $1 OFFSET $2
 	`
 
-		countQuery = `SELECT COUNT(*) FROM movies`
+		rows, err = r.db.QueryContext(ctx, query, pageSize+1, offset)
+		if err != nil {
+			return nil, err
+		}
+
+		countQuery := `SELECT COUNT(*) FROM movies`
+
+		err = r.db.QueryRowContext(ctx, countQuery).Scan(&totalCount)
+		if err != nil {
+			return nil, err
+		}
+
 	} else {
 		// Query to get the movies for the current page, including search term filtering
-		query = `
+		query := `
     SELECT id, title, genre, year, wiki, plot, director, "cast"
     FROM movies
     WHERE title ILIKE '%' || $3 || '%'
@@ -52,18 +65,23 @@ func (r *MovieRepository) GetMovies(ctx context.Context, searchTerm string, page
     LIMIT $1 OFFSET $2
     `
 
-		countQuery = `
+		rows, err = r.db.QueryContext(ctx, query, pageSize+1, offset, searchTerm)
+		if err != nil {
+			return nil, err
+		}
+
+		countQuery := `
     SELECT COUNT(*)
     FROM movies
     WHERE title ILIKE '%' || $1 || '%'
        OR "cast" ILIKE '%' || $1 || '%'
        OR director ILIKE '%' || $1 || '%'
     `
-	}
 
-	rows, err := r.db.QueryContext(ctx, query, pageSize+1, offset, searchTerm)
-	if err != nil {
-		return nil, err
+		err = r.db.QueryRowContext(ctx, countQuery, searchTerm).Scan(&totalCount)
+		if err != nil {
+			return nil, err
+		}
 	}
 	defer rows.Close()
 
@@ -78,13 +96,6 @@ func (r *MovieRepository) GetMovies(ctx context.Context, searchTerm string, page
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	var totalCount int
-
-	err = r.db.QueryRowContext(ctx, countQuery, searchTerm).Scan(&totalCount)
-	if err != nil {
 		return nil, err
 	}
 
@@ -108,7 +119,7 @@ func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Mo
 
 	var movie models.Movie
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		id.String(), &movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast,
+		&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast,
 	)
 	if err == sql.ErrNoRows {
 		return nil, nil
