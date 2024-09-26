@@ -1,10 +1,8 @@
 import { useQuery } from '@apollo/client';
-import { GET_MOVIES, SEARCH_MOVIES } from '../graphql/queries';
+import { GET_MOVIES, GET_RECOMMENDATIONS, SEARCH_MOVIES } from '../graphql/queries';
 import { useEffect, useState } from 'react';
 import MovieCard from './MovieCard';
 import getWikipediaImage from '@/lib/getImage';
-import { TextField, InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 
 interface MovieNode {
     wiki: string;
@@ -41,14 +39,20 @@ interface MovieImages {
     [key: string]: string;
 }
 
-export default function MoviesComponent() {
+interface MoviesComponentProps {
+    queryType: 'GET_MOVIES' | 'SEARCH_MOVIES' | 'GET_RECOMMENDATIONS';
+    searchTerm?: string;
+}
+
+export default function MoviesComponent({ queryType, searchTerm }: MoviesComponentProps) {
     const [page, setPage] = useState(1);
     const pageSize = 20;
     const [movieImages, setMovieImages] = useState<MovieImages>({});
-    const [searchTerm, setSearchTerm] = useState('');
 
     const { loading, error, data, refetch } = useQuery<MoviesData>(
-        searchTerm ? SEARCH_MOVIES : GET_MOVIES,
+        queryType === 'GET_RECOMMENDATIONS'
+            ? GET_RECOMMENDATIONS
+            : queryType === 'SEARCH_MOVIES' && searchTerm ? SEARCH_MOVIES : GET_MOVIES,
         {
             variables: searchTerm
                 ? { query: searchTerm, page, pageSize }
@@ -69,13 +73,6 @@ export default function MoviesComponent() {
         });
     }, [data]);
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setSearchTerm(value);
-        setPage(1);
-        refetch(value ? { query: value, page: 1, pageSize } : { page: 1, pageSize });
-    };
-
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
         refetch(searchTerm
@@ -92,24 +89,6 @@ export default function MoviesComponent() {
     return (
         <div className="container mx-auto px-4">
             <h2 className="text-2xl text-sky-400 font-bold mb-4">Movies</h2>
-            <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Search movies..."
-                value={searchTerm}
-                onChange={handleSearch}
-                className="mb-6"
-                slotProps={{
-                    input: {
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                        ),
-                        className: 'bg-white mb-4',
-                    }
-                }}
-            />
             {loading && <p>Loading...</p>}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {movies.map(({ node }) => (
