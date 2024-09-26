@@ -31,7 +31,7 @@ func NewGoogleAuthClient() *GoogleAuthClient {
 	var googleOauthConfig = &oauth2.Config{
 		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		RedirectURL:  "https://nextwatch.azanulhaque.dev/auth/callback/google",
+		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
 		Scopes:       []string{"email", "profile"},
 		Endpoint:     google.Endpoint,
 	}
