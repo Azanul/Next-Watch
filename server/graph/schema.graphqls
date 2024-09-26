@@ -56,6 +56,7 @@ type Query {
   movie(id: ID!): Movie
   movieByTitle(title: String!): Movie
   movies(page: Int!, pageSize: Int!): MovieConnection!
+  searchMovies(query: String!, page: Int!, pageSize: Int!): MovieConnection!
   recommendations(page: Int!, pageSize: Int!): MovieConnection!
   ratings(userId: ID!): [Rating!]!
   user(id: ID!): User!

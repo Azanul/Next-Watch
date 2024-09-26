@@ -165,6 +165,45 @@ func (r *queryResolver) Movies(ctx context.Context, page int, pageSize int) (*mo
 	}, nil
 }
 
+// SearchMovies is the resolver for the searchMovies field.
+func (r *queryResolver) SearchMovies(ctx context.Context, query string, page int, pageSize int) (*model.MovieConnection, error) {
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10 // Default page size
+	}
+
+	moviePage, err := r.MovieService.SearchMovies(ctx, query, page, pageSize)
+	if err != nil {
+		return nil, err
+	}
+
+	edges := make([]*model.MovieEdge, len(moviePage.Movies))
+	for i, movie := range moviePage.Movies {
+		edges[i] = &model.MovieEdge{
+			Node: &model.Movie{
+				ID:    movie.ID.String(),
+				Title: movie.Title,
+				Genre: movie.Genre,
+				Year:  movie.Year,
+				Wiki:  movie.Wiki,
+				Plot:  movie.Plot,
+				Cast:  movie.Cast,
+			},
+		}
+	}
+
+	return &model.MovieConnection{
+		Edges: edges,
+		PageInfo: &model.PageInfo{
+			HasNextPage:     moviePage.HasNextPage,
+			HasPreviousPage: moviePage.HasPreviousPage,
+		},
+		TotalCount: moviePage.TotalCount,
+	}, nil
+}
+
 // Recommendations is the resolver for the recommendations field.
 func (r *queryResolver) Recommendations(ctx context.Context, page int, pageSize int) (*model.MovieConnection, error) {
 	// Get current user from context

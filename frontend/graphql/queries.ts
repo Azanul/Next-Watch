@@ -54,3 +54,24 @@ export const GET_MOVIE_BY_TITLE = gql`
     }
   }
 `;
+
+export const SEARCH_MOVIES = gql`
+  query SearchMovies($query: String!, $page: Int!, $pageSize: Int!) {
+    searchMovies(query: $query, page: $page, pageSize: $pageSize) {
+      edges {
+        node {
+          id
+          title
+          genre
+          year
+          wiki
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+      }
+      totalCount
+    }
+  }
+`;

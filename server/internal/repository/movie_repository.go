@@ -26,18 +26,42 @@ type MoviePage struct {
 	HasPreviousPage bool
 }
 
-func (r *MovieRepository) GetMovies(ctx context.Context, page, pageSize int) (*MoviePage, error) {
+func (r *MovieRepository) GetMovies(ctx context.Context, searchTerm string, page, pageSize int) (*MoviePage, error) {
 	offset := (page - 1) * pageSize
 
-	// Query to get the movies for the current page
-	query := `
+	var query, countQuery string
+	if searchTerm == "" {
+		// Query to get the movies for the current page
+		query = `
+		SELECT id, title, genre, year, wiki, plot, director, "cast"
+    FROM movies
+    ORDER BY id
+    LIMIT $1 OFFSET $2
+	`
+
+		countQuery = `SELECT COUNT(*) FROM movies`
+	} else {
+		// Query to get the movies for the current page, including search term filtering
+		query = `
     SELECT id, title, genre, year, wiki, plot, director, "cast"
     FROM movies
+    WHERE title ILIKE '%' || $3 || '%'
+       OR "cast" ILIKE '%' || $3 || '%'
+       OR director ILIKE '%' || $3 || '%'
     ORDER BY id
     LIMIT $1 OFFSET $2
     `
 
-	rows, err := r.db.QueryContext(ctx, query, pageSize+1, offset) // We fetch one extra to determine if there's a next page
+		countQuery = `
+    SELECT COUNT(*)
+    FROM movies
+    WHERE title ILIKE '%' || $1 || '%'
+       OR "cast" ILIKE '%' || $1 || '%'
+       OR director ILIKE '%' || $1 || '%'
+    `
+	}
+
+	rows, err := r.db.QueryContext(ctx, query, pageSize+1, offset, searchTerm)
 	if err != nil {
 		return nil, err
 	}
@@ -57,9 +81,9 @@ func (r *MovieRepository) GetMovies(ctx context.Context, page, pageSize int) (*M
 		return nil, err
 	}
 
-	// Query to get the total count of movies
 	var totalCount int
-	err = r.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM movies").Scan(&totalCount)
+
+	err = r.db.QueryRowContext(ctx, countQuery, searchTerm).Scan(&totalCount)
 	if err != nil {
 		return nil, err
 	}
