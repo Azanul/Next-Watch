@@ -22,11 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <FormbricksProvider />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-sans)] bg-gradient-to-b from-sky-400 to-sky-200`}
       >
         <ApolloWrapper>{children}</ApolloWrapper>
+        <FormbricksProvider />
       </body>
     </html>
   );
