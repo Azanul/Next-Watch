@@ -37,7 +37,7 @@ func randomBytesInHex(count int) (string, error) {
 }
 
 // Helper function to encrypt a token
-func encryptToken(token string) (string, error) {
+func EncryptToken(token string) (string, error) {
 	key := []byte(os.Getenv("ENCRYPTION_KEY"))
 	block, err := aes.NewCipher(key)
 	if err != nil {

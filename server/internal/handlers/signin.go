@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/Azanul/Next-Watch/internal/auth"
+	"github.com/Azanul/Next-Watch/internal/models"
 	"github.com/Azanul/Next-Watch/internal/services"
 )
 
@@ -49,6 +51,7 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		log.Printf("User retrieved: %s %v", claims.Email, user)
 		ctx = context.WithValue(ctx, "user", user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -66,15 +69,48 @@ func (h *Handler) GoogleSignin(w http.ResponseWriter, r *http.Request) {
 
 // Google OAuth callback handler
 func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	token, err := h.googleAuthClient.Callback(r.FormValue("code"), r.FormValue("state"))
 	if err != nil {
 		http.Error(w, "Failed to exchange token", http.StatusInternalServerError)
 		return
 	}
 
+	claims, err := h.googleAuthClient.GetUserInfo(token.AccessToken)
+	if err != nil {
+		http.Error(w, "Failed to get token", http.StatusInternalServerError)
+		return
+	}
+
+	user, err := h.userService.GetUserByEmail(ctx, claims.Email)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Error getting user", http.StatusInternalServerError)
+		return
+	}
+	if user == nil {
+		user = &models.User{
+			Email: claims.Email,
+			Name:  claims.Name,
+		}
+		err := h.userService.CreateUser(ctx, user)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Error creating user", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	encryptedToken, err := auth.EncryptToken(token.AccessToken)
+	if err != nil {
+		http.Error(w, "Failed to encrypt token", http.StatusInternalServerError)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",
-		Value:    token,
+		Value:    encryptedToken,
 		Expires:  time.Now().Add(3600 * 24 * 7 * time.Second), // 1 week
 		Path:     "/",
 		SameSite: http.SameSiteStrictMode,
