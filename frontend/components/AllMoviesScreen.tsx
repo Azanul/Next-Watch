@@ -20,12 +20,14 @@ export default function AllMoviesScreen() {
                 value={searchTerm}
                 onChange={handleSearch}
                 className="mb-6"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon />
-                        </InputAdornment>
-                    ),
+                slotProps={{
+                    input: {
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        ),
+                    }
                 }}
             />
             <MoviesComponent queryType={searchTerm ? 'SEARCH_MOVIES' : 'GET_MOVIES'} searchTerm={searchTerm}></MoviesComponent>

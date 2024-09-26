@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -51,7 +50,6 @@ func (h *Handler) AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		log.Printf("User retrieved: %s %v", claims.Email, user)
 		ctx = context.WithValue(ctx, "user", user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -85,7 +83,6 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.userService.GetUserByEmail(ctx, claims.Email)
 	if err != nil {
-		log.Println(err)
 		http.Error(w, "Error getting user", http.StatusInternalServerError)
 		return
 	}
@@ -96,7 +93,6 @@ func (h *Handler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 		err := h.userService.CreateUser(ctx, user)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, "Error creating user", http.StatusInternalServerError)
 			return
 		}
