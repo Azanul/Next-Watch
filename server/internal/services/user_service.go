@@ -24,6 +24,7 @@ func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
 	return s.userRepo.Create(ctx, &models.User{
 		ID:    userID,
 		Email: user.Email,
+		Name:  user.Name,
 		Role:  "USER",
 	})
 }
