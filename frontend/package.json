@@ -13,6 +13,7 @@
     "@apollo/experimental-nextjs-app-support": "^0.11.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@formbricks/js": "^2.2.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
     "@types/styled-components": "^5.1.34",
