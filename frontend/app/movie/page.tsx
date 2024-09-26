@@ -104,6 +104,13 @@ export default function MovieDetail() {
             </Typography>
             <Box sx={{ mt: 2 }}>
               <Typography component="legend"><strong>Rating</strong></Typography>
+              <Button 
+                onClick={() => handleRatingChange(0)} 
+                sx={{ mt: 1, ml: 2 }} 
+                color="secondary"
+              >
+                Dislike
+              </Button>
               <Rating
                 name="half-rating"
                 value={rating}
