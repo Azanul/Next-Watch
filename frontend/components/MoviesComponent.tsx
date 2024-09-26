@@ -33,6 +33,16 @@ interface MoviesData {
         };
         totalCount: number;
     };
+    recommendations?: {
+        edges: {
+            node: MovieNode;
+        }[];
+        pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+        };
+        totalCount: number;
+    };
 }
 
 interface MovieImages {
@@ -83,8 +93,8 @@ export default function MoviesComponent({ queryType, searchTerm }: MoviesCompone
 
     if (error) return <p>Error: {error.message}</p>;
 
-    const movies = data?.movies?.edges || data?.searchMovies?.edges || [];
-    const pageInfo = data?.movies?.pageInfo || data?.searchMovies?.pageInfo;
+    const movies = data?.movies?.edges || data?.searchMovies?.edges || data?.recommendations?.edges || [];
+    const pageInfo = data?.movies?.pageInfo || data?.searchMovies?.pageInfo || data?.recommendations?.pageInfo;
 
     return (
         <div className="container mx-auto px-4">
