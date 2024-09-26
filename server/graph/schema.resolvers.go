@@ -15,7 +15,7 @@ import (
 )
 
 // RateMovie is the resolver for the rateMovie field.
-func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score int) (*model.Rating, error) {
+func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score float64) (*model.Rating, error) {
 	currentUser, err := auth.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score 
 	}
 
 	// Call service to rate movie
-	rating, err := r.RatingService.RateMovie(ctx, currentUser.ID, movieUUID, score)
+	rating, err := r.RatingService.RateMovie(ctx, currentUser, movieUUID, float32(score))
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (r *mutationResolver) RateMovie(ctx context.Context, movieID string, score 
 		ID:    rating.ID.String(),
 		User:  &model.User{ID: rating.UserID.String()},
 		Movie: &model.Movie{ID: rating.MovieID.String()},
-		Score: rating.Score,
+		Score: float64(rating.Score),
 	}, nil
 }
 
@@ -206,7 +206,6 @@ func (r *queryResolver) SearchMovies(ctx context.Context, query string, page int
 
 // Recommendations is the resolver for the recommendations field.
 func (r *queryResolver) Recommendations(ctx context.Context, page int, pageSize int) (*model.MovieConnection, error) {
-	// Get current user from context
 	currentUser, err := auth.GetUserFromContext(ctx)
 	if err != nil {
 		return nil, err
