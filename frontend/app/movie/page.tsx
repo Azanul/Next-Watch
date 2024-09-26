@@ -43,7 +43,7 @@ export default function MovieDetail() {
         href="/"
         startIcon={<ArrowBackIcon />}
         sx={{ position: 'absolute', top: 16, left: 16 }}
-        className='bg-sky-500 text-sky-100'
+        className='bg-sky-500 text-white'
       >
         Back to Movies
       </Button>
