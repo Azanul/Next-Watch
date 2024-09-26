@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useQuery } from '@apollo/client';
-import { GET_MOVIE_BY_TITLE } from '@/graphql/queries';
+import { useQuery, useMutation } from '@apollo/client';
+import { DELETE_RATING, GET_MOVIE_BY_TITLE, RATE_MOVIE } from '@/graphql/queries';
 import Link from 'next/link';
 import getWikipediaImage from '@/lib/getImage';
 import { Card, CardContent, Typography, Box, Rating, Button } from '@mui/material';
@@ -19,6 +19,22 @@ export default function MovieDetail() {
     variables: { title: movieTitle },
   });
 
+  const [rateMovie] = useMutation(RATE_MOVIE, {
+    onError: (error) => {
+      console.error('Error rating movie:', error);
+    },
+  });
+
+  const [deleteRating] = useMutation(DELETE_RATING, {
+    onCompleted: () => {
+      setRating(0);
+    },
+    onError: (error) => {
+      console.error('Error deleting rating:', error);
+    },
+  });
+
+  // Load the movie's image
   useEffect(() => {
     if (data?.movieByTitle?.wiki) {
       getWikipediaImage(data.movieByTitle.wiki).then(url => setImageUrl(url));
@@ -29,6 +45,18 @@ export default function MovieDetail() {
   if (error) return <Typography>Error: {error.message}</Typography>;
 
   const movie = data.movieByTitle;
+
+  const handleRatingChange = (newValue: number | null) => {
+    setRating(newValue);
+
+    if (newValue) {
+      rateMovie({ variables: { movieId: movie.id, score: newValue } });
+    }
+  };
+
+  const handleDeleteRating = () => {
+    deleteRating({ variables: { id: movie.ratingId } });
+  };
 
   return (
     <Box sx={{ 
@@ -80,9 +108,7 @@ export default function MovieDetail() {
                 name="half-rating"
                 value={rating}
                 precision={0.5}
-                onChange={(event, newValue) => {
-                  setRating(newValue);
-                }}
+                onChange={(event, newValue) => handleRatingChange(newValue)}
                 sx={{
                   '& .MuiRating-iconFilled': {
                     color: 'skyblue',
@@ -92,6 +118,13 @@ export default function MovieDetail() {
                   },
                 }}
               />
+              <Button 
+                onClick={handleDeleteRating} 
+                sx={{ mt: 1 }} 
+                color="error"
+              >
+                Clear Rating
+              </Button>
             </Box>
             <Typography variant="body1" gutterBottom className='line-clamp-4'>
               <strong>Plot:</strong> {movie.plot}

@@ -36,7 +36,7 @@ func main() {
 
 	userService := services.NewUserService(userRepo, movieRepo)
 	movieService := services.NewMovieService(movieRepo)
-	ratingService := services.NewRatingService(ratingRepo, movieRepo)
+	ratingService := services.NewRatingService(ratingRepo, movieRepo, userRepo)
 	recommendationService := services.NewRecommendationService(ratingRepo, movieRepo)
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(

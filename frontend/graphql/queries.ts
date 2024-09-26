@@ -75,3 +75,18 @@ export const SEARCH_MOVIES = gql`
     }
   }
 `;
+
+export const RATE_MOVIE = gql`
+  mutation RateMovie($movieId: ID!, $score: Float!) {
+    rateMovie(movieId: $movieId, score: $score) {
+      id
+      score
+    }
+  }
+`;
+
+export const DELETE_RATING = gql`
+  mutation DeleteRating($id: ID!) {
+    deleteRating(id: $id)
+  }
+`;
