@@ -16,7 +16,7 @@ export default function Home() {
   }, []);
 
   function handleGoogleSignIn() {
-    router.push(`http://localhost:8080/auth/signin/google`);
+    router.push(`/auth/signin/google`);
   }
 
   return (
