@@ -3,6 +3,7 @@ import { GET_MOVIES, GET_RECOMMENDATIONS, SEARCH_MOVIES } from '../graphql/queri
 import { useEffect, useState } from 'react';
 import MovieCard from './MovieCard';
 import getWikipediaImage from '@/lib/getImage';
+import Loading from '@/app/loading';
 
 interface MovieNode {
     wiki: string;
@@ -99,7 +100,7 @@ export default function MoviesComponent({ queryType, searchTerm }: MoviesCompone
 
     return (
         <div className="container mx-auto px-4">
-            {loading && <p>Loading...</p>}
+            {loading && <Loading />}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {movies.map(({ node }) => (
                     <MovieCard

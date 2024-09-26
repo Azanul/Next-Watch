@@ -8,6 +8,7 @@ import Link from 'next/link';
 import getWikipediaImage from '@/lib/getImage';
 import { Card, CardContent, Typography, Box, Rating, Button } from '@mui/material';
 import { ArrowBack, ThumbDown } from '@mui/icons-material';
+import Loading from '../loading';
 
 export default function MovieDetail() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export default function MovieDetail() {
     }
   }, [data]);
 
-  if (loading) return <Typography>Loading...</Typography>;
+  if (loading) return <Loading />;
   if (error) return <Typography>Error: {error.message}</Typography>;
 
   const movie = data.movieByTitle;
