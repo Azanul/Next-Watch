@@ -1,12 +1,19 @@
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, ServerError, from } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:8080/query',
   credentials: 'include',
 });
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if ((networkError && (networkError as ServerError).statusCode === 401) || graphQLErrors?.some(error => error?.extensions?.code === 'UNAUTHENTICATED')) {
+    window.location.href = '/';
+  }
+});
+
 const client = new ApolloClient({
-  link: httpLink,
+  link: from([errorLink, httpLink]),
   cache: new InMemoryCache(),
 });
 
