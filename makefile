@@ -16,3 +16,9 @@ env:
 graphql-schema:
 	cd server && go get github.com/99designs/gqlgen
 	cd server && go run github.com/99designs/gqlgen generate
+
+migrate-up:
+	migrate -path db/migration -database DATABASE_URL up
+
+migrate-down:
+	migrate -path db/migration -database DATABASE_URL down
