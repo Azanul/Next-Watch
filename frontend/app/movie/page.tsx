@@ -7,7 +7,7 @@ import { DELETE_RATING, GET_MOVIE_BY_TITLE, RATE_MOVIE } from '@/graphql/queries
 import Link from 'next/link';
 import getWikipediaImage from '@/lib/getImage';
 import { Card, CardContent, Typography, Box, Rating, Button } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ArrowBack, ThumbDown } from '@mui/icons-material';
 
 export default function MovieDetail() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -59,31 +59,31 @@ export default function MovieDetail() {
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      minHeight: '100vh', 
-      position: 'relative', 
-      padding: 2 
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      position: 'relative',
+      padding: 2
     }}>
       <Button
         component={Link}
         href="/"
-        startIcon={<ArrowBackIcon />}
+        startIcon={<ArrowBack />}
         sx={{ position: 'absolute', top: 16, left: 16 }}
         className='bg-sky-500 text-white'
       >
         Back to Movies
       </Button>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flexGrow: 1 
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexGrow: 1
       }}>
-        <Card sx={{ 
-          display: 'flex', 
-          backgroundColor: 'white', 
+        <Card sx={{
+          display: 'flex',
+          backgroundColor: 'white',
           color: 'skyblue',
           maxWidth: '70%',
           width: '100%',
@@ -104,12 +104,13 @@ export default function MovieDetail() {
             </Typography>
             <Box sx={{ mt: 2 }}>
               <Typography component="legend"><strong>Rating</strong></Typography>
-              <Button 
-                onClick={() => handleRatingChange(0)} 
-                sx={{ mt: 1, ml: 2 }} 
+              <Button
+                startIcon={<ThumbDown />}
+                onClick={() => handleRatingChange(0)}
+                sx={{ mt: 1, ml: 2 }}
                 color="secondary"
               >
-                Dislike
+
               </Button>
               <Rating
                 name="half-rating"
@@ -125,9 +126,9 @@ export default function MovieDetail() {
                   },
                 }}
               />
-              <Button 
-                onClick={handleDeleteRating} 
-                sx={{ mt: 1 }} 
+              <Button
+                onClick={handleDeleteRating}
+                sx={{ mt: 1 }}
                 color="error"
               >
                 Clear Rating
