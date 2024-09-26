@@ -69,12 +69,12 @@ func (g *GoogleAuthClient) AuthorizationURL() (string, error) {
 	), nil
 }
 
-func (g *GoogleAuthClient) Callback(code string, state string) (string, error) {
+func (g *GoogleAuthClient) Callback(code string, state string) (*oauth2.Token, error) {
 	g.mu.Lock()
 	codeVerifier, exists := g.codeVerifiers[state]
 	if !exists {
 		g.mu.Unlock()
-		return "", errors.New("no matching code verifier found for state")
+		return nil, errors.New("no matching code verifier found for state")
 	}
 	delete(g.codeVerifiers, state)
 	g.mu.Unlock()
@@ -85,15 +85,10 @@ func (g *GoogleAuthClient) Callback(code string, state string) (string, error) {
 		oauth2.SetAuthURLParam("code_verifier", codeVerifier),
 	)
 	if err != nil {
-		return "", fmt.Errorf("error while exchanging token: %v", err)
+		return nil, fmt.Errorf("error while exchanging token: %v", err)
 	}
 
-	encryptedToken, err := encryptToken(token.AccessToken)
-	if err != nil {
-		return "", fmt.Errorf("failed to encrypt token: %v", err)
-	}
-
-	return encryptedToken, nil
+	return token, nil
 }
 
 func (g *GoogleAuthClient) ValidateToken(token string) (*GoogleClaims, error) {
@@ -102,7 +97,11 @@ func (g *GoogleAuthClient) ValidateToken(token string) (*GoogleClaims, error) {
 		return nil, errors.New("failed to decrypt token")
 	}
 
-	client := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(&oauth2.Token{AccessToken: tokenString}))
+	return g.GetUserInfo(tokenString)
+}
+
+func (g *GoogleAuthClient) GetUserInfo(accessToken string) (*GoogleClaims, error) {
+	client := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(&oauth2.Token{AccessToken: accessToken}))
 	oauth2Service, err := oauth2v2.NewService(context.Background(), option.WithHTTPClient(client))
 	if err != nil {
 		return nil, errors.New("failed to create OAuth2 service")
