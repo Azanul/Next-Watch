@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from 'react';
-import MoviesComponent from './MoviesComponent';
-import RecommendationsComponent from './RecommendationsComponent';
+import AllMoviesScreen from './AllMoviesScreen';
+import RecommendationsScreen from './RecommendationsScreen';
 
 export default function MainComponent() {
     const [activeTab, setActiveTab] = useState('movies');
@@ -34,7 +34,7 @@ export default function MainComponent() {
                 </div>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-                {activeTab === 'movies' ? <MoviesComponent /> : <RecommendationsComponent />}
+                {activeTab === 'movies' ? <AllMoviesScreen /> : <RecommendationsScreen />}
             </div>
         </div>
     );
