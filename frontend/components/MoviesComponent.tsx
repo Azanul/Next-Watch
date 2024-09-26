@@ -72,7 +72,7 @@ export default function MoviesComponent({ queryType, searchTerm }: MoviesCompone
     );
 
     useEffect(() => {
-        const movies = data?.movies?.edges || data?.searchMovies?.edges || [];
+        const movies = data?.movies?.edges || data?.searchMovies?.edges || data?.recommendations?.edges || [];
         movies.forEach(async ({ node }) => {
             if (node.wiki) {
                 const imageUrl = await getWikipediaImage(node.wiki);

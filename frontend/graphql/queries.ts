@@ -30,6 +30,7 @@ export const GET_RECOMMENDATIONS = gql`
           title
           genre
           year
+          wiki
         }
       }
       pageInfo {
