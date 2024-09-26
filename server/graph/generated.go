@@ -84,6 +84,7 @@ type ComplexityRoot struct {
 		Movies          func(childComplexity int, page int, pageSize int) int
 		Ratings         func(childComplexity int, userID string) int
 		Recommendations func(childComplexity int, page int, pageSize int) int
+		SearchMovies    func(childComplexity int, query string, page int, pageSize int) int
 		User            func(childComplexity int, id string) int
 	}
 
@@ -110,6 +111,7 @@ type QueryResolver interface {
 	Movie(ctx context.Context, id string) (*model.Movie, error)
 	MovieByTitle(ctx context.Context, title string) (*model.Movie, error)
 	Movies(ctx context.Context, page int, pageSize int) (*model.MovieConnection, error)
+	SearchMovies(ctx context.Context, query string, page int, pageSize int) (*model.MovieConnection, error)
 	Recommendations(ctx context.Context, page int, pageSize int) (*model.MovieConnection, error)
 	Ratings(ctx context.Context, userID string) ([]*model.Rating, error)
 	User(ctx context.Context, id string) (*model.User, error)
@@ -308,6 +310,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Recommendations(childComplexity, args["page"].(int), args["pageSize"].(int)), true
+
+	case "Query.searchMovies":
+		if e.complexity.Query.SearchMovies == nil {
+			break
+		}
+
+		args, err := ec.field_Query_searchMovies_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SearchMovies(childComplexity, args["query"].(string), args["page"].(int), args["pageSize"].(int)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -850,6 +864,92 @@ func (ec *executionContext) field_Query_recommendations_argsPage(
 }
 
 func (ec *executionContext) field_Query_recommendations_argsPageSize(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["pageSize"]
+	if !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pageSize"))
+	if tmp, ok := rawArgs["pageSize"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_searchMovies_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_searchMovies_argsQuery(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["query"] = arg0
+	arg1, err := ec.field_Query_searchMovies_argsPage(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page"] = arg1
+	arg2, err := ec.field_Query_searchMovies_argsPageSize(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pageSize"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_searchMovies_argsQuery(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["query"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("query"))
+	if tmp, ok := rawArgs["query"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_searchMovies_argsPage(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["page"]
+	if !ok {
+		var zeroVal int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+	if tmp, ok := rawArgs["page"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_searchMovies_argsPageSize(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (int, error) {
@@ -1886,6 +1986,69 @@ func (ec *executionContext) fieldContext_Query_movies(ctx context.Context, field
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_movies_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_searchMovies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_searchMovies(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SearchMovies(rctx, fc.Args["query"].(string), fc.Args["page"].(int), fc.Args["pageSize"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MovieConnection)
+	fc.Result = res
+	return ec.marshalNMovieConnection2ᚖgithubᚗcomᚋAzanulᚋNextᚑWatchᚋgraphᚋmodelᚐMovieConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_searchMovies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_MovieConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_MovieConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_MovieConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MovieConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_searchMovies_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4759,6 +4922,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_movies(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "searchMovies":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_searchMovies(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

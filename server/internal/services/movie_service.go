@@ -35,7 +35,11 @@ func NewMovieService(movieRepo *repository.MovieRepository) *MovieService {
 // }
 
 func (s *MovieService) GetMovies(ctx context.Context, page, pageSize int) (*repository.MoviePage, error) {
-	return s.movieRepo.GetMovies(ctx, page, pageSize)
+	return s.movieRepo.GetMovies(ctx, "", page, pageSize)
+}
+
+func (s *MovieService) SearchMovies(ctx context.Context, searchTerm string, page, pageSize int) (*repository.MoviePage, error) {
+	return s.movieRepo.GetMovies(ctx, searchTerm, page, pageSize)
 }
 
 func (s *MovieService) GetMovieByID(ctx context.Context, movieID uuid.UUID) (*models.Movie, error) {
