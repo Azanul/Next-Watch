@@ -70,7 +70,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		DeleteRating func(childComplexity int, id string) int
-		RateMovie    func(childComplexity int, movieID string, score int) int
+		RateMovie    func(childComplexity int, movieID string, score float64) int
 	}
 
 	PageInfo struct {
@@ -104,7 +104,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	RateMovie(ctx context.Context, movieID string, score int) (*model.Rating, error)
+	RateMovie(ctx context.Context, movieID string, score float64) (*model.Rating, error)
 	DeleteRating(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
@@ -235,7 +235,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RateMovie(childComplexity, args["movieId"].(string), args["score"].(int)), true
+		return e.complexity.Mutation.RateMovie(childComplexity, args["movieId"].(string), args["score"].(float64)), true
 
 	case "PageInfo.hasNextPage":
 		if e.complexity.PageInfo.HasNextPage == nil {
@@ -620,22 +620,22 @@ func (ec *executionContext) field_Mutation_rateMovie_argsMovieID(
 func (ec *executionContext) field_Mutation_rateMovie_argsScore(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (int, error) {
+) (float64, error) {
 	// We won't call the directive if the argument is null.
 	// Set call_argument_directives_with_null to true to call directives
 	// even if the argument is null.
 	_, ok := rawArgs["score"]
 	if !ok {
-		var zeroVal int
+		var zeroVal float64
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("score"))
 	if tmp, ok := rawArgs["score"]; ok {
-		return ec.unmarshalNInt2int(ctx, tmp)
+		return ec.unmarshalNFloat2float64(ctx, tmp)
 	}
 
-	var zeroVal int
+	var zeroVal float64
 	return zeroVal, nil
 }
 
@@ -1599,7 +1599,7 @@ func (ec *executionContext) _Mutation_rateMovie(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RateMovie(rctx, fc.Args["movieId"].(string), fc.Args["score"].(int))
+		return ec.resolvers.Mutation().RateMovie(rctx, fc.Args["movieId"].(string), fc.Args["score"].(float64))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2561,9 +2561,9 @@ func (ec *executionContext) _Rating_score(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Rating_score(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2573,7 +2573,7 @@ func (ec *executionContext) fieldContext_Rating_score(_ context.Context, field g
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5500,6 +5500,21 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

@@ -32,7 +32,7 @@ type Rating struct {
 	ID        uuid.UUID `json:"id"`
 	UserID    uuid.UUID `json:"userId"`
 	MovieID   uuid.UUID `json:"movieId"`
-	Score     int       `json:"score"`
+	Score     float32   `json:"score"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
