@@ -1,16 +1,17 @@
 "use client"
 
-import { useSearchParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@apollo/client';
 import { GET_MOVIE_BY_TITLE } from '@/graphql/queries';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import getWikipediaImage from '@/lib/getImage';
-
+import { Card, CardContent, Typography, Box, Rating, Button } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function MovieDetail() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState<number | null>(0);
   const searchParams = useSearchParams();
   const movieTitle = searchParams.get('title')?.split('/').pop()?.replace(/-/g, ' ');
 
@@ -24,39 +25,80 @@ export default function MovieDetail() {
     }
   }, [data]);
 
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography>Error: {error.message}</Typography>;
 
   const movie = data.movieByTitle;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">{movie.title}</h1>
-      <div className="mb-4">
-        <img src={imageUrl || ''} alt={movie.title} className="w-full max-w-md mx-auto" />
-      </div>
-      <p className="mb-2"><strong>Genre:</strong> {movie.genre}</p>
-      <p className="mb-2"><strong>Year:</strong> {movie.year}</p>
-      <div className="mb-4">
-        <h2 className="text-xl font-semibold mb-2">Rating</h2>
-        <div className="flex items-center">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              onClick={() => setRating(star)}
-              className={`text-3xl ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
-            >
-              ★
-            </button>
-          ))}
-        </div>
-      </div>
-      <div
-        className="bg-sky-500 text-white px-4 py-2 rounded"
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh', 
+      position: 'relative', 
+      padding: 2 
+    }}>
+      <Button
+        component={Link}
+        href="/"
+        startIcon={<ArrowBackIcon />}
+        sx={{ position: 'absolute', top: 16, left: 16 }}
+        className='bg-sky-500 text-sky-100'
       >
-        <Link href={"/"}>Back to Movies</Link>
-      </div>
-    </div>
+        Back to Movies
+      </Button>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        flexGrow: 1 
+      }}>
+        <Card sx={{ 
+          display: 'flex', 
+          backgroundColor: 'white', 
+          color: 'skyblue',
+          maxWidth: '70%',
+          width: '100%',
+          borderRadius: 2
+        }}>
+          <Box sx={{ width: '40%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={imageUrl || ''} alt={movie.title} style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'cover' }} />
+          </Box>
+          <CardContent sx={{ width: '60%' }}>
+            <Typography variant="h4" component="div" gutterBottom>
+              {movie.title}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              <strong>Genre:</strong> {movie.genre}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              <strong>Year:</strong> {movie.year}
+            </Typography>
+            <Box sx={{ mt: 2 }}>
+              <Typography component="legend"><strong>Rating</strong></Typography>
+              <Rating
+                name="half-rating"
+                value={rating}
+                precision={0.5}
+                onChange={(event, newValue) => {
+                  setRating(newValue);
+                }}
+                sx={{
+                  '& .MuiRating-iconFilled': {
+                    color: 'skyblue',
+                  },
+                  '& .MuiRating-iconHover': {
+                    color: 'deepskyblue',
+                  },
+                }}
+              />
+            </Box>
+            <Typography variant="body1" gutterBottom className='line-clamp-4'>
+              <strong>Plot:</strong> {movie.plot}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    </Box>
   );
 }
