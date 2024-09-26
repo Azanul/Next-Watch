@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache, HttpLink, ServerError, from } from '@apoll
 import { onError } from '@apollo/client/link/error';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:8080/query',
+  uri: '/query',
   credentials: 'include',
 });
 

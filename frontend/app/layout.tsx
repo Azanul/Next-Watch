@@ -27,7 +27,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-sans)] bg-gradient-to-b from-sky-400 to-sky-200`}
       >
         <Suspense>
-
           <ApolloWrapper>{children}</ApolloWrapper>
           <FormbricksProvider />
         </Suspense>
