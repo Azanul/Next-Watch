@@ -113,13 +113,13 @@ func (r *MovieRepository) GetMovies(ctx context.Context, searchTerm string, page
 }
 
 func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Movie, error) {
-	query := `SELECT id, title, genre, year, wiki, plot, "cast" 
+	query := `SELECT id, title, genre, year, wiki, plot, "cast", embedding
               FROM movies 
               WHERE id = $1`
 
 	var movie models.Movie
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
-		&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast,
+		&movie.ID, &movie.Title, &movie.Genre, &movie.Year, &movie.Wiki, &movie.Plot, &movie.Cast, &movie.Embedding,
 	)
 	if err == sql.ErrNoRows {
 		return nil, nil
