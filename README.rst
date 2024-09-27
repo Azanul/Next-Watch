@@ -1,6 +1,6 @@
 Next-watch website - `Next watch`_ 
 ====================================
-..  _Next watch: https://next-watch-87.herokuapp.com/
+..  _Next watch: https://nextwatch.azanulhaque.dev/
 
 |Next Watch|
 
@@ -53,7 +53,7 @@ Next-watch website - `Next watch`_
 Introduction
 ============
 
-This web app made with Go, and database handled with GraphQL lets me decide what to watch next!  I can wishlist or mark a movie watched to manage my movie watchlist. Users worldwide can suggest me anything to watch and add it to my watchlist.
+A movie recommendation app.
 
 Guide
 ============

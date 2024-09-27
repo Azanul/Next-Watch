@@ -1,8 +1,11 @@
+"use client"
+
 import localFont from "next/font/local";
 import "./globals.css";
 import { ApolloWrapper } from "@/components/ApolloWrapper";
 import FormbricksProvider from "./formbricks";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+import Footer from "./footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -21,6 +24,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [hasAccessToken, setHasAccessToken] = useState(false);
+
+  useEffect(() => {
+    const cookies = document.cookie.split(';');
+    const hasToken = cookies.some(cookie => cookie.trim().startsWith('access_token='));
+    setHasAccessToken(hasToken);
+  }, []);
+
   return (
     <html lang="en">
       <body
@@ -28,9 +39,10 @@ export default function RootLayout({
       >
         <Suspense>
           <ApolloWrapper>{children}</ApolloWrapper>
-          <FormbricksProvider />
+          {hasAccessToken && <FormbricksProvider />}
         </Suspense>
       </body>
+      <Footer />
     </html>
   );
 }
