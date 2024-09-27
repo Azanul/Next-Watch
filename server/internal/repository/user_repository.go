@@ -13,6 +13,9 @@ type UserRepository struct {
 	db *sql.DB
 }
 
+// Checking if UserRepository implements UserRepositoryInterface during compile time
+var _ UserRepositoryInterface = (*UserRepository)(nil)
+
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
