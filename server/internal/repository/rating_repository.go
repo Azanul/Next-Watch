@@ -1,5 +1,3 @@
-// internal/repository/rating_repository.go
-
 package repository
 
 import (
@@ -14,6 +12,9 @@ import (
 type RatingRepository struct {
 	db *sql.DB
 }
+
+// Checking if RatingRepository implements RatingRepositoryInterface during compile time
+var _ RatingRepositoryInterface = (*RatingRepository)(nil)
 
 func NewRatingRepository(db *sql.DB) *RatingRepository {
 	return &RatingRepository{db: db}
