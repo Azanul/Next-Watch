@@ -15,6 +15,9 @@ type MovieRepository struct {
 	db *sql.DB
 }
 
+// Checking if MovieRepository implements MovieRepositoryInterface during compile time
+var _ MovieRepositoryInterface = (*MovieRepository)(nil)
+
 func NewMovieRepository(db *sql.DB) *MovieRepository {
 	return &MovieRepository{db: db}
 }
