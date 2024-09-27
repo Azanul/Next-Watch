@@ -1,6 +1,6 @@
 Next-watch website - `Next watch`_ 
 ====================================
-..  _Next watch: https://next-watch-87.herokuapp.com/
+..  _Next watch: https://nextwatch.azanulhaque.dev/
 
 |Next Watch|
 
