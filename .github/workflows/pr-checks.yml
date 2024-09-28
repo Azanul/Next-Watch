@@ -33,6 +33,8 @@ jobs:
         working-directory: server
     steps:
     - uses: actions/checkout@v4
+    - name: Build and embed frontend
+      run: make frontend
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
