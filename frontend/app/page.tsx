@@ -16,7 +16,7 @@ export default function Home() {
   }, []);
 
   function handleGoogleSignIn() {
-    router.push(`/auth/signin/google`);
+    router.push("/auth/signin/google");
   }
 
   return (
