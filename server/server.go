@@ -34,7 +34,7 @@ func main() {
 	movieRepo := repository.NewMovieRepository(db)
 	ratingRepo := repository.NewRatingRepository(db)
 
-	userService := services.NewUserService(userRepo, movieRepo)
+	userService := services.NewUserService(userRepo)
 	movieService := services.NewMovieService(movieRepo)
 	ratingService := services.NewRatingService(ratingRepo, movieRepo, userRepo)
 	recommendationService := services.NewRecommendationService(ratingRepo, movieRepo)

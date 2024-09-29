@@ -9,10 +9,10 @@ import (
 )
 
 type UserService struct {
-	userRepo *repository.UserRepository
+	userRepo repository.UserRepositoryInterface
 }
 
-func NewUserService(userRepo *repository.UserRepository, movieRepo *repository.MovieRepository) *UserService {
+func NewUserService(userRepo repository.UserRepositoryInterface) *UserService {
 	return &UserService{
 		userRepo: userRepo,
 	}
@@ -31,4 +31,8 @@ func (s *UserService) CreateUser(ctx context.Context, user *models.User) error {
 
 func (s *UserService) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	return s.userRepo.GetByEmail(ctx, email)
+}
+
+func (s *UserService) UpdateUser(ctx context.Context, user *models.User) error {
+	return s.userRepo.Update(ctx, user)
 }

@@ -5,6 +5,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/Azanul/Next-Watch/internal/models"
 	"github.com/google/uuid"
@@ -14,6 +15,9 @@ import (
 type MovieRepository struct {
 	db *sql.DB
 }
+
+// Checking if MovieRepository implements MovieRepositoryInterface during compile time
+var _ MovieRepositoryInterface = (*MovieRepository)(nil)
 
 func NewMovieRepository(db *sql.DB) *MovieRepository {
 	return &MovieRepository{db: db}
@@ -32,58 +36,49 @@ func (r *MovieRepository) GetMovies(ctx context.Context, searchTerm string, page
 	var rows *sql.Rows
 	var err error
 	var totalCount int
-	if searchTerm == "" {
-		// Query to get the movies for the current page
-		query := `
+
+	query := `
 		SELECT id, title, genre, year, wiki, plot, director, "cast"
-    FROM movies
-    ORDER BY id
-    LIMIT $1 OFFSET $2
+		FROM movies
 	`
 
+	countQuery := `SELECT COUNT(*) FROM movies`
+
+	if searchTerm != "" {
+		query += `
+			WHERE title ILIKE '%' || $3 || '%'
+			OR "cast" ILIKE '%' || $3 || '%'
+			OR director ILIKE '%' || $3 || '%'
+		`
+
+		countQuery += `
+			WHERE title ILIKE '%' || $1 || '%'
+			OR "cast" ILIKE '%' || $1 || '%'
+			OR director ILIKE '%' || $1 || '%'
+		`
+	}
+	query += " ORDER BY id LIMIT $1 OFFSET $2"
+
+	// Query movies
+	if searchTerm == "" {
 		rows, err = r.db.QueryContext(ctx, query, pageSize+1, offset)
-		if err != nil {
-			return nil, err
-		}
-
-		countQuery := `SELECT COUNT(*) FROM movies`
-
-		err = r.db.QueryRowContext(ctx, countQuery).Scan(&totalCount)
-		if err != nil {
-			return nil, err
-		}
-
 	} else {
-		// Query to get the movies for the current page, including search term filtering
-		query := `
-    SELECT id, title, genre, year, wiki, plot, director, "cast"
-    FROM movies
-    WHERE title ILIKE '%' || $3 || '%'
-       OR "cast" ILIKE '%' || $3 || '%'
-       OR director ILIKE '%' || $3 || '%'
-    ORDER BY id
-    LIMIT $1 OFFSET $2
-    `
-
 		rows, err = r.db.QueryContext(ctx, query, pageSize+1, offset, searchTerm)
-		if err != nil {
-			return nil, err
-		}
-
-		countQuery := `
-    SELECT COUNT(*)
-    FROM movies
-    WHERE title ILIKE '%' || $1 || '%'
-       OR "cast" ILIKE '%' || $1 || '%'
-       OR director ILIKE '%' || $1 || '%'
-    `
-
-		err = r.db.QueryRowContext(ctx, countQuery, searchTerm).Scan(&totalCount)
-		if err != nil {
-			return nil, err
-		}
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query movies: %w", err)
 	}
 	defer rows.Close()
+
+	// Count movies
+	if searchTerm == "" {
+		err = r.db.QueryRowContext(ctx, countQuery).Scan(&totalCount)
+	} else {
+		err = r.db.QueryRowContext(ctx, countQuery, searchTerm).Scan(&totalCount)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to count movies: %w", err)
+	}
 
 	var movies []*models.Movie
 	for rows.Next() {

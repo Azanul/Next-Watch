@@ -12,12 +12,12 @@ import (
 )
 
 type RatingService struct {
-	ratingRepo *repository.RatingRepository
-	movieRepo  *repository.MovieRepository
-	userRepo   *repository.UserRepository
+	ratingRepo repository.RatingRepositoryInterface
+	movieRepo  repository.MovieRepositoryInterface
+	userRepo   repository.UserRepositoryInterface
 }
 
-func NewRatingService(ratingRepo *repository.RatingRepository, movieRepo *repository.MovieRepository, userRepo *repository.UserRepository) *RatingService {
+func NewRatingService(ratingRepo repository.RatingRepositoryInterface, movieRepo repository.MovieRepositoryInterface, userRepo repository.UserRepositoryInterface) *RatingService {
 	return &RatingService{
 		ratingRepo: ratingRepo,
 		movieRepo:  movieRepo,
