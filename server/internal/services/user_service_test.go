@@ -83,6 +83,8 @@ func TestUserService_CreateUser(t *testing.T) {
 				t.Errorf("UserService.CreateUser() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+		mockRepo.ExpectedCalls = nil
+		mockRepo.Calls = nil
 	}
 }
 
@@ -197,5 +199,7 @@ func TestUserService_UpdateUser(t *testing.T) {
 				t.Errorf("UserService.UpdateUser() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+		mockRepo.ExpectedCalls = nil
+		mockRepo.Calls = nil
 	}
 }
