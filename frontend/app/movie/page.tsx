@@ -105,35 +105,37 @@ export default function MovieDetail() {
             </Typography>
             <Box sx={{ mt: 2 }}>
               <Typography component="legend"><strong>Rating</strong></Typography>
-              <Button
-                startIcon={<ThumbDown />}
-                onClick={() => handleRatingChange(0)}
-                sx={{ mt: 1, ml: 2 }}
-                color="secondary"
-              >
-
-              </Button>
-              <Rating
-                name="half-rating"
-                value={rating}
-                precision={0.5}
-                onChange={(event, newValue) => handleRatingChange(newValue)}
-                sx={{
-                  '& .MuiRating-iconFilled': {
-                    color: 'skyblue',
-                  },
-                  '& .MuiRating-iconHover': {
-                    color: 'deepskyblue',
-                  },
-                }}
-              />
-              <Button
-                onClick={handleDeleteRating}
-                sx={{ mt: 1 }}
-                color="error"
-              >
-                Clear Rating
-              </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Button
+                  startIcon={<ThumbDown />}
+                  onClick={() => handleRatingChange(0)}
+                  sx={{ ml: 2 }}
+                  color="secondary"
+                >
+                  Dislike
+                </Button>
+                <Rating
+                  name="half-rating"
+                  value={rating}
+                  precision={0.5}
+                  onChange={(event, newValue) => handleRatingChange(newValue)}
+                  sx={{
+                    mx: 2,
+                    '& .MuiRating-iconFilled': {
+                      color: 'skyblue',
+                    },
+                    '& .MuiRating-iconHover': {
+                      color: 'deepskyblue',
+                    },
+                  }}
+                />
+                <Button
+                  onClick={handleDeleteRating}
+                  color="error"
+                >
+                  Clear Rating
+                </Button>
+              </Box>
             </Box>
             <Typography variant="body1" gutterBottom className='line-clamp-4'>
               <strong>Plot:</strong> {movie.plot}
