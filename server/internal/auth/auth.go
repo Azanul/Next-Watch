@@ -27,6 +27,9 @@ func GetUserFromContext(ctx context.Context) (*models.User, error) {
 
 // Generates a hexadecimal string of random bytes with a specified length
 func randomBytesInHex(count int) (string, error) {
+	if count <= 0 {
+		return "", fmt.Errorf("expected count to be greater than 0, got %d", count)
+	}
 	buf := make([]byte, count)
 	_, err := io.ReadFull(rand.Reader, buf)
 	if err != nil {
